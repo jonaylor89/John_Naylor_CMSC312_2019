@@ -8,6 +8,9 @@ import (
 
 const (
 
+  // ClockSpeed : Execution Rate for virtual CPU
+  ClockSpeed = 200
+
   // Process States
 
   // CREATED : process created
@@ -26,6 +29,12 @@ const (
   TERMINATED
 )
 
+var (
+
+  // NumOfProc : Number of processes created
+  NumOfProc int = 0
+)
+
 // Process : Running set of code
 type Process struct {
   PID int;
@@ -34,14 +43,21 @@ type Process struct {
   memory int;
 }
 
+func createProc(runtime int, mem int) Process {
+
+  NumOfProc++
+
+  return Process {
+    PID: NumOfProc,
+    state: CREATED,
+    runtime: runtime,
+    memory: mem,
+  }
+}
+
 func main() {
 
-  p := Process{ 
-    PID: 1, 
-    state: CREATED,
-    runtime: 300,
-    memory: 45,
-   }
+  p := createProc(300, 45)
 
   for {
 
@@ -49,7 +65,7 @@ func main() {
     fmt.Println(p)
     p.state = WAITING
 
-    time.Sleep(200 * time.Millisecond)
+    time.Sleep(ClockSpeed * time.Millisecond)
 
   }
 
