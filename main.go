@@ -4,6 +4,7 @@ package main
 import (
   "fmt"
   "time"
+  "rand"
 )
 
 const (
@@ -31,8 +32,8 @@ const (
 
 var (
 
-  // NumOfProc : Number of processes created
-  NumOfProc int = 0
+  // ProcNum : PID for the highest process
+  ProcNum int = 0
 )
 
 // Process : Running set of code
@@ -43,12 +44,17 @@ type Process struct {
   memory int;
 }
 
+// Scheduler : Module to schedule process to run
+type Scheduler struct {
+  processes []Process;
+}
+
 func createProc(runtime int, mem int) Process {
 
-  NumOfProc++
+  ProcNum++
 
   return Process {
-    PID: NumOfProc,
+    PID: ProcNum,
     state: CREATED,
     runtime: runtime,
     memory: mem,
@@ -57,15 +63,25 @@ func createProc(runtime int, mem int) Process {
 
 func main() {
 
-  p := createProc(300, 45)
+  s := Scheduler{
+    processes: []Process{},
+  }
+
+  p := createProc(rand.Int(500) + 1, rand.Int(100) + 1)
+
+  s.processes = append(s.processes, p)
 
   for {
 
-    p.state = RUNNING
-    fmt.Println(p)
-    p.state = WAITING
+    for _, curProc := range s.processes {
+      curProc.state = RUNNING
 
-    time.Sleep(ClockSpeed * time.Millisecond)
+      fmt.Println(curProc)
+
+
+      curProc.state = WAITING
+      time.Sleep(ClockSpeed * time.Millisecond)
+    }
 
   }
 
