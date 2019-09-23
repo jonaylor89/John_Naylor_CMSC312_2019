@@ -4,7 +4,7 @@ package main
 import (
   "fmt"
   "time"
-  "rand"
+  "math/rand"
 )
 
 const (
@@ -67,7 +67,7 @@ func main() {
     processes: []Process{},
   }
 
-  p := createProc(rand.Int(500) + 1, rand.Int(100) + 1)
+  p := createProc(rand.Intn(500) + 1, rand.Intn(100) + 1)
 
   s.processes = append(s.processes, p)
 
