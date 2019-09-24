@@ -78,14 +78,13 @@ func (s *Scheduler) Run() {
 				fmt.Println("[INFO] exiting")
 				return
 			}
-		default:
-			fmt.Println("[INFO] no incoming processes")
 		}
 
 		for _, curProc := range s.processes {
 			curProc.state = RUNNING
 
-			fmt.Println(curProc)
+			// TODO: Sleep for now instead of actual execution
+			time.Sleep(200 * time.Millisecond)
 
 			curProc.state = WAITING
 		}
@@ -124,11 +123,13 @@ func main() {
 		switch text {
 		case "new":
 			p := CreateProc(rand.Intn(500)+1, rand.Intn(100)+1)
-			ch <- p
+      ch <- p
+      fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+    case "len":
+      fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "exit":
-			fmt.Println("exiting program")
+			fmt.Println("exiting simulator")
 			return
-		}
-
+    }
 	}
 }
