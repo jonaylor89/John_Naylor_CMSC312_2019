@@ -47,21 +47,25 @@ type Process struct {
 
 // Scheduler : Module to schedule process to run
 type Scheduler struct {
-	inMsg     chan Process
-	processes []Process
+	inMsg     chan *Process
+	processes []*Process
 }
 
 // CreateProc : create a new process correctly
-func CreateProc(runtime int, mem int) Process {
+func CreateProc(runtime int, mem int) *Process {
 
 	ProcNum++
 
-	return Process{
+	return &Process{
 		PID:     ProcNum,
 		state:   CREATED,
 		runtime: runtime,
 		memory:  mem,
 	}
+}
+
+func remove(slice []*Process, s int) []*Process {
+  return append(slice[:s], slice[s+1:]...)
 }
 
 // Run : Start the schedule and process execution
@@ -77,31 +81,39 @@ func (s *Scheduler) Run() {
 				// Channel is closed to execution must exit
 				fmt.Println("[INFO] exiting")
 				return
-			}
+      }
+    default:
+      // No new process
+      break
 		}
 
-		for _, curProc := range s.processes {
+		for i, curProc := range s.processes {
 			curProc.state = RUNNING
 
-			// TODO: Sleep for now instead of actual execution
-			time.Sleep(200 * time.Millisecond)
+      curProc.runtime -= 10
 
-			curProc.state = WAITING
+      if curProc.runtime <= 0 {
+        s.processes = remove(s.processes, i)
+      } else {
+			  curProc.state = WAITING
+      }
 		}
 
-		time.Sleep(2000 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 	}
 }
 
 func main() {
 
+  rand.Seed(time.Now().UnixNano())
+
 	// Message channel between main kernel and scheduler
-	ch := make(chan Process, 10)
+	ch := make(chan *Process, 10)
 	defer close(ch)
 
 	s := Scheduler{
 		inMsg:     ch,
-		processes: []Process{},
+		processes: []*Process{},
 	}
 
 	// Run the scheduler
@@ -127,6 +139,13 @@ func main() {
       fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
     case "len":
       fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+    case "dump":
+      fmt.Println("Process Dump")
+      fmt.Println("--------------------")
+      for proc := range s.processes {
+        fmt.Println(proc)
+      }
+      fmt.Println("--------------------")
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
