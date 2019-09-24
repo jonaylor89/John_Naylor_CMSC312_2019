@@ -65,7 +65,7 @@ func CreateProc(runtime int, mem int) *Process {
 }
 
 func remove(slice []*Process, s int) []*Process {
-  return append(slice[:s], slice[s+1:]...)
+	return append(slice[:s], slice[s+1:]...)
 }
 
 // Run : Start the schedule and process execution
@@ -81,22 +81,22 @@ func (s *Scheduler) Run() {
 				// Channel is closed to execution must exit
 				fmt.Println("[INFO] exiting")
 				return
-      }
-    default:
-      // No new process
-      break
+			}
+		default:
+			// No new process
+			break
 		}
 
 		for i, curProc := range s.processes {
 			curProc.state = RUNNING
 
-      curProc.runtime -= 10
+			curProc.runtime -= 10
 
-      if curProc.runtime <= 0 {
-        s.processes = remove(s.processes, i)
-      } else {
-			  curProc.state = WAITING
-      }
+			if curProc.runtime <= 0 {
+				s.processes = remove(s.processes, i)
+			} else {
+				curProc.state = WAITING
+			}
 		}
 
 		time.Sleep(200 * time.Millisecond)
@@ -105,7 +105,7 @@ func (s *Scheduler) Run() {
 
 func main() {
 
-  rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 
 	// Message channel between main kernel and scheduler
 	ch := make(chan *Process, 10)
@@ -135,20 +135,20 @@ func main() {
 		switch text {
 		case "new":
 			p := CreateProc(rand.Intn(500)+1, rand.Intn(100)+1)
-      ch <- p
-      fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
-    case "len":
-      fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
-    case "dump":
-      fmt.Println("Process Dump")
-      fmt.Println("--------------------")
-      for proc := range s.processes {
-        fmt.Println(proc)
-      }
-      fmt.Println("--------------------")
+			ch <- p
+			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+		case "len":
+			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+		case "dump":
+			fmt.Println("Process Dump")
+			fmt.Println("--------------------")
+			for proc := range s.processes {
+				fmt.Println(proc)
+			}
+			fmt.Println("--------------------")
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
-    }
+		}
 	}
 }
