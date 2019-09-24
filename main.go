@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"math/rand"
-	"os"
+  "os"
+  "sort"
 	"strings"
 
 	// "strconv"
@@ -76,30 +77,37 @@ func (s *Scheduler) Run() {
 		select {
 		case x, ok := <-s.inMsg:
 			if ok {
-				s.processes = append(s.processes, x)
+        // New process ready to be executed
+
+        s.processes = append(s.processes, x)
+        
+        // Naive priority algorithm
+        sort.Slice(s.processes, func(i, j int) bool { return s.processes[i].runtime < s.processes[j].runtime })
 			} else {
 				// Channel is closed to execution must exit
-				fmt.Println("[INFO] exiting")
 				return
 			}
 		default:
-			// No new process
+			// No new processes
 			break
 		}
 
 		for i, curProc := range s.processes {
 			curProc.state = RUNNING
 
+      // I'm assuming this will get much more complex beyond just subtracting runtime
+      // Fortunately, as of now it is basic round robin execution
 			curProc.runtime -= 10
 
 			if curProc.runtime <= 0 {
 				s.processes = remove(s.processes, i)
 			} else {
 				curProc.state = WAITING
-			}
+      }
+
+		  time.Sleep(200 * time.Millisecond)
 		}
 
-		time.Sleep(200 * time.Millisecond)
 	}
 }
 
@@ -140,12 +148,10 @@ func main() {
 		case "len":
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "dump":
-			fmt.Println("Process Dump")
-			fmt.Println("--------------------")
-			for proc := range s.processes {
-				fmt.Println(proc)
+			fmt.Println("process dump:")
+			for _, proc := range s.processes {
+				fmt.Println(*proc)
 			}
-			fmt.Println("--------------------")
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
