@@ -1,88 +1,134 @@
-
 package main
 
 import (
-  "fmt"
-  "time"
-  "math/rand"
+	"bufio"
+	"fmt"
+	"math/rand"
+	"os"
+	"strings"
+
+	// "strconv"
+	"time"
 )
 
 const (
 
-  // ClockSpeed : Execution Rate for virtual CPU
-  ClockSpeed = 200
+	// Process States
 
-  // Process States
+	// CREATED : process created
+	CREATED = iota
 
-  // CREATED : process created
-  CREATED = iota
+	// RUNNING : process running
+	RUNNING
 
-  // RUNNING : process running
-  RUNNING
+	// WAITING : process waiting
+	WAITING
 
-  // WAITING : process waiting
-  WAITING
+	// BLOCKED : process blocked
+	BLOCKED
 
-  // BLOCKED : process blocked
-  BLOCKED
-
-  // TERMINATED : process terminated
-  TERMINATED
+	// TERMINATED : process terminated
+	TERMINATED
 )
 
 var (
 
-  // ProcNum : PID for the highest process
-  ProcNum int = 0
+	// ProcNum : PID for the highest process
+	ProcNum int = 0
 )
 
 // Process : Running set of code
 type Process struct {
-  PID int;
-  state int;
-  runtime int;
-  memory int;
+	PID     int
+	state   int
+	runtime int
+	memory  int
 }
 
 // Scheduler : Module to schedule process to run
 type Scheduler struct {
-  processes []Process;
+	inMsg     chan Process
+	processes []Process
 }
 
-func createProc(runtime int, mem int) Process {
+// CreateProc : create a new process correctly
+func CreateProc(runtime int, mem int) Process {
 
-  ProcNum++
+	ProcNum++
 
-  return Process {
-    PID: ProcNum,
-    state: CREATED,
-    runtime: runtime,
-    memory: mem,
-  }
+	return Process{
+		PID:     ProcNum,
+		state:   CREATED,
+		runtime: runtime,
+		memory:  mem,
+	}
+}
+
+// Run : Start the schedule and process execution
+func (s *Scheduler) Run() {
+	for {
+
+		// Check for new processes to schedule
+		select {
+		case x, ok := <-s.inMsg:
+			if ok {
+				s.processes = append(s.processes, x)
+			} else {
+				// Channel is closed to execution must exit
+				fmt.Println("[INFO] exiting")
+				return
+			}
+		default:
+			fmt.Println("[INFO] no incoming processes")
+		}
+
+		for _, curProc := range s.processes {
+			curProc.state = RUNNING
+
+			fmt.Println(curProc)
+
+			curProc.state = WAITING
+		}
+
+		time.Sleep(2000 * time.Millisecond)
+	}
 }
 
 func main() {
 
-  s := Scheduler{
-    processes: []Process{},
-  }
+	// Message channel between main kernel and scheduler
+  ch := make(chan Process, 10)
+  defer close(ch)
 
-  p := createProc(rand.Intn(500) + 1, rand.Intn(100) + 1)
+	s := Scheduler{
+		inMsg:     ch,
+		processes: []Process{},
+	}
 
-  s.processes = append(s.processes, p)
+	// Run the scheduler
+	go s.Run()
 
-  for {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("OS Shell")
+	fmt.Println("---------------------")
 
-    for _, curProc := range s.processes {
-      curProc.state = RUNNING
+	for {
 
-      fmt.Println(curProc)
+		fmt.Print("==> ")
+		text, err := reader.ReadString('\n')
+		text = strings.ReplaceAll(text, "\n", "")
+		if err != nil {
+			fmt.Println("failed to read user input")
+		}
 
+		switch text {
+		case "new":
+			p := CreateProc(rand.Intn(500)+1, rand.Intn(100)+1)
+			ch <- p
+		case "exit":
+			fmt.Println("exiting program")
+			return
+		}
 
-      curProc.state = WAITING
-      time.Sleep(ClockSpeed * time.Millisecond)
-    }
-
-  }
-
+	}
 }
