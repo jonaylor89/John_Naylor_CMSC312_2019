@@ -97,8 +97,8 @@ func (s *Scheduler) Run() {
 func main() {
 
 	// Message channel between main kernel and scheduler
-  ch := make(chan Process, 10)
-  defer close(ch)
+	ch := make(chan Process, 10)
+	defer close(ch)
 
 	s := Scheduler{
 		inMsg:     ch,

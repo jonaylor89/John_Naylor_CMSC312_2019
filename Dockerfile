@@ -1,6 +1,6 @@
 
 ######## Start build phase of execution #######
-FROM golang:lastest as builder
+FROM golang:latest as builder
 
 LABEL maintainer="John Naylor <jonaylor89@gmail.com>"
  
