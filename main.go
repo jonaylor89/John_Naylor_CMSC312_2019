@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"math/rand"
-  "os"
-  "sort"
+	"os"
+	"sort"
 	"strings"
 
 	// "strconv"
@@ -34,6 +34,9 @@ const (
 
 var (
 
+	// TimeQuantum : time quantum for process
+	TimeQuantum = 10
+
 	// ProcNum : PID for the highest process
 	ProcNum int = 0
 )
@@ -41,6 +44,7 @@ var (
 // Process : Running set of code
 type Process struct {
 	PID     int
+	Name    string
 	state   int
 	runtime int
 	memory  int
@@ -53,12 +57,13 @@ type Scheduler struct {
 }
 
 // CreateProc : create a new process correctly
-func CreateProc(runtime int, mem int) *Process {
+func CreateProc(name string, runtime int, mem int) *Process {
 
 	ProcNum++
 
 	return &Process{
 		PID:     ProcNum,
+		Name:    name,
 		state:   CREATED,
 		runtime: runtime,
 		memory:  mem,
@@ -77,12 +82,12 @@ func (s *Scheduler) Run() {
 		select {
 		case x, ok := <-s.inMsg:
 			if ok {
-        // New process ready to be executed
+				// New process ready to be executed
 
-        s.processes = append(s.processes, x)
-        
-        // Naive priority algorithm
-        sort.Slice(s.processes, func(i, j int) bool { return s.processes[i].runtime < s.processes[j].runtime })
+				s.processes = append(s.processes, x)
+
+				// Naive priority algorithm
+				sort.Slice(s.processes, func(i, j int) bool { return s.processes[i].runtime < s.processes[j].runtime })
 			} else {
 				// Channel is closed to execution must exit
 				return
@@ -95,17 +100,17 @@ func (s *Scheduler) Run() {
 		for i, curProc := range s.processes {
 			curProc.state = RUNNING
 
-      // I'm assuming this will get much more complex beyond just subtracting runtime
-      // Fortunately, as of now it is basic round robin execution
-			curProc.runtime -= 10
+			// I'm assuming this will get much more complex beyond just subtracting runtime
+			// Fortunately, as of now it is basic round robin execution
+			curProc.runtime -= TimeQuantum
+			time.Sleep(200 * time.Millisecond)
 
 			if curProc.runtime <= 0 {
 				s.processes = remove(s.processes, i)
 			} else {
 				curProc.state = WAITING
-      }
+			}
 
-		  time.Sleep(200 * time.Millisecond)
 		}
 
 	}
@@ -142,7 +147,7 @@ func main() {
 
 		switch text {
 		case "new":
-			p := CreateProc(rand.Intn(500)+1, rand.Intn(100)+1)
+			p := CreateProc("Random Proc", rand.Intn(500)+1, rand.Intn(100)+1)
 			ch <- p
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "len":
