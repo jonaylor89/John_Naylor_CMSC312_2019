@@ -136,20 +136,35 @@ func main() {
 	fmt.Println("OS Shell")
 	fmt.Println("---------------------")
 
+	var args []string
 	for {
 
 		fmt.Print("==> ")
 		text, err := reader.ReadString('\n')
 		text = strings.ReplaceAll(text, "\n", "")
+		args = strings.Split(text, " ")
 		if err != nil {
 			fmt.Println("failed to read user input")
 		}
 
-		switch text {
+		switch args[0] {
 		case "new":
 			p := CreateProc("Random Proc", rand.Intn(500)+1, rand.Intn(100)+1)
 			ch <- p
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+		case "load":
+			if len(args) != 2 {
+				fmt.Println("`load` requires a filename as an argument")	
+				break
+			}
+
+			f, err := os.Open(args[1])
+			if err != nil {
+				fmt.Println("error loading file")
+				break
+			}
+
+			fmt.Println(f)	
 		case "len":
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "dump":
@@ -160,6 +175,8 @@ func main() {
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
+		default:
+			break
 		}
 	}
 }
