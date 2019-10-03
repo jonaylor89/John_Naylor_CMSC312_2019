@@ -87,8 +87,6 @@ func (s *Scheduler) Run() {
 
 				s.processes = append(s.processes, x)
 
-				// Naive priority algorithm
-				sort.Slice(s.processes, func(i, j int) bool { return s.processes[i].runtime < s.processes[j].runtime })
 			} else {
 				// Channel is closed to execution must exit
 				return
@@ -149,10 +147,12 @@ func main() {
 		}
 
 		switch args[0] {
+
 		case "new":
 			p := CreateProc("Random Proc", rand.Intn(500)+1, rand.Intn(100)+1)
 			ch <- p
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+
 		case "load":
 			if len(args) != 2 {
 				fmt.Println("`load` requires a filename as an argument")
@@ -172,13 +172,12 @@ func main() {
 			var line string
 			for {
 				line, err = reader.ReadString('\n')
-
-				fmt.Printf(" > Read %d characters\n", len(line))
-				fmt.Println(line)
-
 				if err != nil {
 					break
 				}
+
+				fmt.Printf(" > Read %d characters\n", len(line))
+				fmt.Println(line)
 			}
 
 			if err != io.EOF {
@@ -187,16 +186,20 @@ func main() {
 
 		case "len":
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+
 		case "dump":
 			fmt.Println("process dump:")
 			for _, proc := range s.processes {
 				fmt.Println(*proc)
 			}
+
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
+
 		default:
 			break
+
 		}
 	}
 }
