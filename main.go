@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
 	"sort"
@@ -132,7 +133,7 @@ func main() {
 	// Run the scheduler
 	go s.Run()
 
-	reader := bufio.NewReader(os.Stdin)
+	console := bufio.NewReader(os.Stdin)
 	fmt.Println("OS Shell")
 	fmt.Println("---------------------")
 
@@ -140,7 +141,7 @@ func main() {
 	for {
 
 		fmt.Print("==> ")
-		text, err := reader.ReadString('\n')
+		text, err := console.ReadString('\n')
 		text = strings.ReplaceAll(text, "\n", "")
 		args = strings.Split(text, " ")
 		if err != nil {
@@ -154,7 +155,7 @@ func main() {
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "load":
 			if len(args) != 2 {
-				fmt.Println("`load` requires a filename as an argument")	
+				fmt.Println("`load` requires a filename as an argument")
 				break
 			}
 
@@ -164,7 +165,26 @@ func main() {
 				break
 			}
 
-			fmt.Println(f)	
+			defer f.Close()
+
+			reader := bufio.NewReader(f)
+
+			var line string
+			for {
+				line, err = reader.ReadString('\n')
+
+				fmt.Printf(" > Read %d characters\n", len(line))
+				fmt.Println(line)
+
+				if err != nil {
+					break
+				}
+			}
+
+			if err != io.EOF {
+				fmt.Printf(" > Failed!: %v\n", err)
+			}
+
 		case "len":
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 		case "dump":
