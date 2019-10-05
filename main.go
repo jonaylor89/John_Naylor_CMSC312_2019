@@ -6,10 +6,9 @@ import (
 	"io"
 	"math/rand"
 	"os"
-	"sort"
+	// "sort"
+	"strconv"
 	"strings"
-
-	// "strconv"
 	"time"
 )
 
@@ -36,7 +35,7 @@ const (
 var (
 
 	// TimeQuantum : time quantum for process
-	TimeQuantum = 10
+	TimeQuantum = 50
 
 	// ProcNum : PID for the highest process
 	ProcNum int = 0
@@ -71,8 +70,51 @@ func CreateProc(name string, runtime int, mem int) *Process {
 	}
 }
 
+func randomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
+
+	totalRuntime := 0
+	for _, instruction := range instructions {
+		if len(instruction) < 2 {
+			continue
+		}
+
+		templateRuntime, err := strconv.Atoi(instruction[1])
+		if err != nil {
+			fmt.Println("Error converting runtime to int", err)
+		}
+
+		// Jitter values by +-10
+		templateRuntime += rand.Intn(20) - 10
+
+		totalRuntime += templateRuntime
+
+		instruction[1] = strconv.Itoa(templateRuntime)
+	}
+
+	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
+	ch <- p
+}
+
+func shuffleInstructions(vals [][]string) {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	// We start at the end of the slice, inserting our random
+	// values one at a time.
+	for n := len(vals); n > 0; n-- {
+		randIndex := r.Intn(n)
+		// We swap the value at index n-1 and the random index
+		// to move our randomly chosen value to the end of the
+		// slice, and to move the value that was at n-1 into our
+		// unshuffled portion of the slice.
+		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
+	}
+}
+
 func remove(slice []*Process, s int) []*Process {
-	return append(slice[:s], slice[s+1:]...)
+	slice[s] = slice[len(slice)-1]  // Copy last element to index i.
+	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
+	slice = slice[:len(slice)-1]   	// Truncate slice.
+
+	return slice
 }
 
 // Run : Start the schedule and process execution
@@ -84,7 +126,6 @@ func (s *Scheduler) Run() {
 		case x, ok := <-s.inMsg:
 			if ok {
 				// New process ready to be executed
-
 				s.processes = append(s.processes, x)
 
 			} else {
@@ -120,7 +161,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Message channel between main kernel and scheduler
-	ch := make(chan *Process, 10)
+	ch := make(chan *Process, 1000)
 	defer close(ch)
 
 	s := Scheduler{
@@ -154,8 +195,8 @@ func main() {
 			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 
 		case "load":
-			if len(args) != 2 {
-				fmt.Println("`load` requires a filename as an argument")
+			if len(args) != 3 {
+				fmt.Println("`load` requires a filename and number of processes as an argument")
 				break
 			}
 
@@ -170,18 +211,43 @@ func main() {
 			reader := bufio.NewReader(f)
 
 			var line string
+			var instruction []string
+			var instructions [][]string
+
 			for {
 				line, err = reader.ReadString('\n')
 				if err != nil {
 					break
 				}
 
-				fmt.Printf(" > Read %d characters\n", len(line))
-				fmt.Println(line)
+				line = strings.ReplaceAll(line, "\n", "")
+				instruction = strings.Split(line, " ")
+
+				if len(instruction) != 2 || (instruction[0] != "CALCULATE" && instruction[0] != "I/O") {
+					// Skip the first few lines with meta data and only work with instructions for now
+					continue
+				}
+
+				instructions = append(instructions, instruction)
+
 			}
 
 			if err != io.EOF {
 				fmt.Printf(" > Failed!: %v\n", err)
+				break
+			}
+
+			numOfProc, err := strconv.Atoi(args[2])
+			if err != nil {
+				fmt.Println("Could not get number of processes")
+				break
+			}
+
+			// Randomize order of isntructions
+			shuffleInstructions(instructions)
+
+			for i := 0; i < numOfProc; i++ {
+				go randomProcessFromTemplate(args[1], instructions, ch)
 			}
 
 		case "len":
