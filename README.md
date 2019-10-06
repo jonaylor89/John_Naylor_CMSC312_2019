@@ -31,6 +31,13 @@ with docker
 # Usage
 
 When executed, the OS Shell is shown. 
+
+```
+OS Shell
+-------------------
+==> 
+```
+
 The available commands for the shell are:
 - load
     - Load in template file and create processes from it
@@ -52,7 +59,7 @@ The available commands for the shell are:
 The requirements for project part 1 (deadline October 6th) are as follows:
 
 - [x] having at least 4 of your own program file templates
-- [_] having a procedure that reads these program files and generates user-specified number of processes from them (hence randomization of values from templates must be used)
+- [x] having a procedure that reads these program files and generates user-specified number of processes from them (hence randomization of values from templates must be used)
 - [x] assigning a PCB to each process that stores basic metadata, including process state
 - [x] having a single scheduler that optimizes the process running cycle 
 - [x] having a dispatcher that changes the status of each process in real time
