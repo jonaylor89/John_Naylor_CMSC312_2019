@@ -6,20 +6,12 @@ import (
 	"io"
 	"math/rand"
 	"os"
-	// "sort"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )
-
-
-// Instruction : Instruction for OS "architecture"
-type Instruction struct {
-	OpCode string
-	param  int
-}
 
 func shuffleInstructions(vals [][]string) {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
@@ -35,14 +27,6 @@ func shuffleInstructions(vals [][]string) {
 	}
 }
 
-func remove(slice []*sched.Process, s int) []*sched.Process {
-	slice[s] = slice[len(slice)-1] // Copy last element to index i.
-	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
-	slice = slice[:len(slice)-1] // Truncate slice.
-
-	return slice
-}
-
 func main() {
 
 	rand.Seed(time.Now().UnixNano())
@@ -52,8 +36,8 @@ func main() {
 	defer close(ch)
 
 	s := sched.Scheduler{
-		inMsg:     ch,
-		processes: []*sched.Process{},
+		InMsg:     ch,
+		Processes: []*sched.Process{},
 	}
 
 	// Run the scheduler
@@ -134,15 +118,15 @@ func main() {
 			shuffleInstructions(instructions)
 
 			for i := 0; i < numOfProc; i++ {
-				go sched.createRandomProcessFromTemplate(args[1], instructions, ch)
+				go sched.CreateRandomProcessFromTemplate(args[1], instructions, ch)
 			}
 
 		case "len":
-			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
+			fmt.Println("processes: ", len(s.Processes), "; queue: ", len(ch))
 
 		case "dump":
 			fmt.Println("process dump:")
-			for _, proc := range s.processes {
+			for _, proc := range s.Processes {
 				fmt.Println(*proc)
 			}
 

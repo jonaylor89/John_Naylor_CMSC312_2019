@@ -1,22 +1,31 @@
 
+package sched
+
+import (
+	"math/rand"
+	"fmt"
+	"strconv"
+	"time"
+)
+
 const (
 
 	// Process States
 
-	// CREATED : process created
-	CREATED = iota
+	// NEW : process created
+	NEW = iota
 
-	// RUNNING : process running
-	RUNNING
+	// READY : process in memory and ready for CPU
+	READY 
 
-	// WAITING : process waiting
-	WAITING
+	// RUN : process running
+	RUN
 
-	// BLOCKED : process blocked
-	BLOCKED
+	// WAIT : process blocked
+	WAIT
 
-	// TERMINATED : process terminated
-	TERMINATED
+	// EXIT : process terminated
+	EXIT
 )
 
 var (
@@ -30,6 +39,8 @@ var (
 
 // Process : Running set of code
 type Process struct {
+	// Some info should be in a process contol block
+	// And there will be a list of all process control blocks
 	PID     int
 	Name    string
 	state   int
@@ -39,8 +50,8 @@ type Process struct {
 
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
-	inMsg     chan *Process
-	processes []*Process
+	InMsg     chan *Process
+	Processes []*Process
 }
 
 // Run : Start the schedule and process execution
@@ -49,10 +60,10 @@ func (s *Scheduler) Run() {
 
 		// Check for new processes to schedule
 		select {
-		case x, ok := <-s.inMsg:
+		case x, ok := <-s.InMsg:
 			if ok {
 				// New process ready to be executed
-				s.processes = append(s.processes, x)
+				s.Processes = append(s.Processes, x)
 
 			} else {
 				// Channel is closed to execution must exit
@@ -63,18 +74,18 @@ func (s *Scheduler) Run() {
 			break
 		}
 
-		for i, curProc := range s.processes {
-			curProc.state = RUNNING
+		for i, curProc := range s.Processes {
+			curProc.state = RUN
 
 			// I'm assuming this will get much more complex beyond just subtracting runtime
 			// Fortunately, as of now it is basic round robin execution
 			curProc.runtime -= TimeQuantum
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(100 * time.Millisecond)
 
 			if curProc.runtime <= 0 {
-				s.processes = remove(s.processes, i)
+				s.Processes = remove(s.Processes, i)
 			} else {
-				curProc.state = WAITING
+				curProc.state = READY
 			}
 
 		}
@@ -90,13 +101,14 @@ func CreateProc(name string, runtime int, mem int) *Process {
 	return &Process{
 		PID:     ProcNum,
 		Name:    name,
-		state:   CREATED,
+		state:   NEW,
 		runtime: runtime,
 		memory:  mem,
 	}
 }
 
-func createRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
+// CreateRandomProcessFromTemplate : Jitter template values to create custom processes
+func CreateRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
 
 	totalRuntime := 0
 	for _, instruction := range instructions {
@@ -125,4 +137,12 @@ func createRandomProcessFromTemplate(templateName string, instructions [][]strin
 
 	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
 	ch <- p
+}
+
+func remove(slice []*Process, s int) []*Process {
+	slice[s] = slice[len(slice)-1] // Copy last element to index i.
+	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
+	slice = slice[:len(slice)-1] // Truncate slice.
+
+	return slice
 }

@@ -31,6 +31,13 @@ with docker
 # Usage
 
 When executed, the OS Shell is shown. 
+
+```
+OS Shell
+-------------------
+==> 
+```
+
 The available commands for the shell are:
 - load
     - Load in template file and create processes from it
