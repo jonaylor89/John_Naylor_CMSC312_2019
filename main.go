@@ -50,71 +50,10 @@ type Process struct {
 	memory  int
 }
 
-// Scheduler : Module to schedule process to run
+// Scheduler : Controller to schedule process to run
 type Scheduler struct {
 	inMsg     chan *Process
 	processes []*Process
-}
-
-// CreateProc : create a new process correctly
-func CreateProc(name string, runtime int, mem int) *Process {
-
-	ProcNum++
-
-	return &Process{
-		PID:     ProcNum,
-		Name:    name,
-		state:   CREATED,
-		runtime: runtime,
-		memory:  mem,
-	}
-}
-
-func randomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
-
-	totalRuntime := 0
-	for _, instruction := range instructions {
-		if len(instruction) < 2 {
-			continue
-		}
-
-		templateRuntime, err := strconv.Atoi(instruction[1])
-		if err != nil {
-			fmt.Println("Error converting runtime to int", err)
-		}
-
-		// Jitter values by +-10
-		templateRuntime += rand.Intn(20) - 10
-
-		totalRuntime += templateRuntime
-
-		instruction[1] = strconv.Itoa(templateRuntime)
-	}
-
-	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
-	ch <- p
-}
-
-func shuffleInstructions(vals [][]string) {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	// We start at the end of the slice, inserting our random
-	// values one at a time.
-	for n := len(vals); n > 0; n-- {
-		randIndex := r.Intn(n)
-		// We swap the value at index n-1 and the random index
-		// to move our randomly chosen value to the end of the
-		// slice, and to move the value that was at n-1 into our
-		// unshuffled portion of the slice.
-		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
-	}
-}
-
-func remove(slice []*Process, s int) []*Process {
-	slice[s] = slice[len(slice)-1]  // Copy last element to index i.
-	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
-	slice = slice[:len(slice)-1]   	// Truncate slice.
-
-	return slice
 }
 
 // Run : Start the schedule and process execution
@@ -156,6 +95,72 @@ func (s *Scheduler) Run() {
 	}
 }
 
+
+// CreateProc : create a new process correctly
+func CreateProc(name string, runtime int, mem int) *Process {
+
+	ProcNum++
+
+	return &Process{
+		PID:     ProcNum,
+		Name:    name,
+		state:   CREATED,
+		runtime: runtime,
+		memory:  mem,
+	}
+}
+
+func createRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
+
+	totalRuntime := 0
+	for _, instruction := range instructions {
+		if len(instruction) < 2 {
+			continue
+		}
+
+
+
+		templateRuntime, err := strconv.Atoi(instruction[1])
+		if err != nil {
+			fmt.Println("Error converting runtime to int", err)
+		}
+
+		// Jitter values by +-10
+		templateRuntime += rand.Intn(20) - 10
+
+		if instruction[0] == "CALCULATE" {
+			totalRuntime += templateRuntime
+		}
+
+		instruction[1] = strconv.Itoa(templateRuntime)
+	}
+
+	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
+	ch <- p
+}
+
+func shuffleInstructions(vals [][]string) {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	// We start at the end of the slice, inserting our random
+	// values one at a time.
+	for n := len(vals); n > 0; n-- {
+		randIndex := r.Intn(n)
+		// We swap the value at index n-1 and the random index
+		// to move our randomly chosen value to the end of the
+		// slice, and to move the value that was at n-1 into our
+		// unshuffled portion of the slice.
+		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
+	}
+}
+
+func remove(slice []*Process, s int) []*Process {
+	slice[s] = slice[len(slice)-1]  // Copy last element to index i.
+	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
+	slice = slice[:len(slice)-1]   	// Truncate slice.
+
+	return slice
+}
+
 func main() {
 
 	rand.Seed(time.Now().UnixNano())
@@ -188,11 +193,6 @@ func main() {
 		}
 
 		switch args[0] {
-
-		case "new":
-			p := CreateProc("Random Proc", rand.Intn(500)+1, rand.Intn(100)+1)
-			ch <- p
-			fmt.Println("processes: ", len(s.processes), "; queue: ", len(ch))
 
 		case "load":
 			if len(args) != 3 {
@@ -247,7 +247,7 @@ func main() {
 			shuffleInstructions(instructions)
 
 			for i := 0; i < numOfProc; i++ {
-				go randomProcessFromTemplate(args[1], instructions, ch)
+				go createRandomProcessFromTemplate(args[1], instructions, ch)
 			}
 
 		case "len":
