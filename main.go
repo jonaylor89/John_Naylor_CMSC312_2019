@@ -41,6 +41,12 @@ var (
 	ProcNum int = 0
 )
 
+// Instruction : Instruction for OS "architecture"
+type Instruction struct {
+	OpCode string
+	param  int
+}
+
 // Process : Running set of code
 type Process struct {
 	PID     int
@@ -54,6 +60,7 @@ type Process struct {
 type Scheduler struct {
 	inMsg     chan *Process
 	processes []*Process
+	instructions []Instruction
 }
 
 // Run : Start the schedule and process execution
@@ -95,7 +102,6 @@ func (s *Scheduler) Run() {
 	}
 }
 
-
 // CreateProc : create a new process correctly
 func CreateProc(name string, runtime int, mem int) *Process {
 
@@ -117,8 +123,6 @@ func createRandomProcessFromTemplate(templateName string, instructions [][]strin
 		if len(instruction) < 2 {
 			continue
 		}
-
-
 
 		templateRuntime, err := strconv.Atoi(instruction[1])
 		if err != nil {
@@ -154,9 +158,9 @@ func shuffleInstructions(vals [][]string) {
 }
 
 func remove(slice []*Process, s int) []*Process {
-	slice[s] = slice[len(slice)-1]  // Copy last element to index i.
+	slice[s] = slice[len(slice)-1] // Copy last element to index i.
 	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
-	slice = slice[:len(slice)-1]   	// Truncate slice.
+	slice = slice[:len(slice)-1] // Truncate slice.
 
 	return slice
 }
