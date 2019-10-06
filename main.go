@@ -127,6 +127,7 @@ func main() {
 			for _, proc := range s.Processes {
 				fmt.Println(*proc)
 			}
+
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
