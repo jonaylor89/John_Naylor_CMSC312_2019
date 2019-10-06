@@ -28,6 +28,22 @@ with docker
 ~$ docker run -it jonaylor/operatingsystem:os
 ```
 
+# Usage
+
+When executed, the OS Shell is shown. 
+The available commands for the shell are:
+- load
+    - Load in template file and create processes from it
+    - e.g. load ProgramFiles/temp1.txt 1000
+        - load template 1 and create 1000 processes
+- len
+    - Lists number of processes in scheduler queue
+- dump
+    - Dumps all processes with info
+- exit
+    - Exits simulator
+
+
 # Assignment
 
 ### Part one

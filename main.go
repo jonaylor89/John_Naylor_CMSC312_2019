@@ -200,6 +200,17 @@ func main() {
 				break
 			}
 
+			numOfProc, err := strconv.Atoi(args[2])
+			if err != nil {
+				fmt.Println("Could not get number of processes")
+				break
+			}
+
+			if numOfProc <= 0 {
+				fmt.Println("`load` number of processes must be postive")
+				break
+			}
+
 			f, err := os.Open(args[1])
 			if err != nil {
 				fmt.Println("error loading file")
@@ -234,12 +245,6 @@ func main() {
 
 			if err != io.EOF {
 				fmt.Printf(" > Failed!: %v\n", err)
-				break
-			}
-
-			numOfProc, err := strconv.Atoi(args[2])
-			if err != nil {
-				fmt.Println("Could not get number of processes")
 				break
 			}
 
