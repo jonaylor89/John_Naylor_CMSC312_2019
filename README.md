@@ -16,7 +16,7 @@ with docker
 ~$ docker build -t jonaylor/operatingsystem:os .
 ```
 
-# Exectuion
+# Execution
 
 without docker
 ```
