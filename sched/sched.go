@@ -1,4 +1,32 @@
 
+const (
+
+	// Process States
+
+	// CREATED : process created
+	CREATED = iota
+
+	// RUNNING : process running
+	RUNNING
+
+	// WAITING : process waiting
+	WAITING
+
+	// BLOCKED : process blocked
+	BLOCKED
+
+	// TERMINATED : process terminated
+	TERMINATED
+)
+
+var (
+
+	// TimeQuantum : time quantum for process
+	TimeQuantum = 50
+
+	// ProcNum : PID for the highest process
+	ProcNum int = 0
+)
 
 // Process : Running set of code
 type Process struct {
@@ -78,11 +106,15 @@ func createRandomProcessFromTemplate(templateName string, instructions [][]strin
 
 		templateRuntime, err := strconv.Atoi(instruction[1])
 		if err != nil {
-			fmt.Println("Error converting runtime to int", err)
+			fmt.Println("error converting runtime to int", err)
 		}
 
-		// Jitter values by +-10
+		// Jitter values by +-20
 		templateRuntime += rand.Intn(20) - 10
+
+		if templateRuntime < 0 {
+			templateRuntime = 0
+		}
 
 		if instruction[0] == "CALCULATE" {
 			totalRuntime += templateRuntime

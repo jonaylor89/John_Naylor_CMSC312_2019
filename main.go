@@ -14,34 +14,6 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )
 
-const (
-
-	// Process States
-
-	// CREATED : process created
-	CREATED = iota
-
-	// RUNNING : process running
-	RUNNING
-
-	// WAITING : process waiting
-	WAITING
-
-	// BLOCKED : process blocked
-	BLOCKED
-
-	// TERMINATED : process terminated
-	TERMINATED
-)
-
-var (
-
-	// TimeQuantum : time quantum for process
-	TimeQuantum = 50
-
-	// ProcNum : PID for the highest process
-	ProcNum int = 0
-)
 
 // Instruction : Instruction for OS "architecture"
 type Instruction struct {
@@ -63,7 +35,7 @@ func shuffleInstructions(vals [][]string) {
 	}
 }
 
-func remove(slice []*Process, s int) []*Process {
+func remove(slice []*sched.Process, s int) []*sched.Process {
 	slice[s] = slice[len(slice)-1] // Copy last element to index i.
 	// slice[len(slice)-1] = nil   	// Erase last element (write zero value)
 	slice = slice[:len(slice)-1] // Truncate slice.
@@ -76,12 +48,12 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// Message channel between main kernel and scheduler
-	ch := make(chan *Process, 1000)
+	ch := make(chan *sched.Process, 1000)
 	defer close(ch)
 
-	s := Scheduler{
+	s := sched.Scheduler{
 		inMsg:     ch,
-		processes: []*Process{},
+		processes: []*sched.Process{},
 	}
 
 	// Run the scheduler
@@ -162,7 +134,7 @@ func main() {
 			shuffleInstructions(instructions)
 
 			for i := 0; i < numOfProc; i++ {
-				go createRandomProcessFromTemplate(args[1], instructions, ch)
+				go sched.createRandomProcessFromTemplate(args[1], instructions, ch)
 			}
 
 		case "len":
