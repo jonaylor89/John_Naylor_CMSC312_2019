@@ -29,7 +29,6 @@ func shuffleInstructions(vals [][]string) {
 
 func main() {
 
-
 	// Message channel between main kernel and scheduler
 	ch := make(chan *sched.Process, 1000)
 	defer close(ch)
@@ -128,7 +127,6 @@ func main() {
 			for _, proc := range s.Processes {
 				fmt.Println(*proc)
 			}
-
 		case "exit":
 			fmt.Println("exiting simulator")
 			return
