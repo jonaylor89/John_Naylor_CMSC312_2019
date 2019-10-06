@@ -29,7 +29,6 @@ func shuffleInstructions(vals [][]string) {
 
 func main() {
 
-	rand.Seed(time.Now().UnixNano())
 
 	// Message channel between main kernel and scheduler
 	ch := make(chan *sched.Process, 1000)

@@ -110,6 +110,8 @@ func CreateProc(name string, runtime int, mem int) *Process {
 // CreateRandomProcessFromTemplate : Jitter template values to create custom processes
 func CreateRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
 
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
 	totalRuntime := 0
 	for _, instruction := range instructions {
 		if len(instruction) < 2 {
@@ -135,7 +137,8 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 		instruction[1] = strconv.Itoa(templateRuntime)
 	}
 
-	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
+	p := CreateProc("From template: "+templateName, totalRuntime, r.Intn(100)+1)
+	p.state = READY
 	ch <- p
 }
 
