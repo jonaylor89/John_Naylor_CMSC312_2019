@@ -1,9 +1,8 @@
-
 package sched
 
 import (
-	"math/rand"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 )
@@ -16,7 +15,7 @@ const (
 	NEW = iota
 
 	// READY : process in memory and ready for CPU
-	READY 
+	READY
 
 	// RUN : process running
 	RUN
@@ -50,8 +49,9 @@ type Process struct {
 
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
-	InMsg     chan *Process
-	Processes []*Process
+	InMsg    chan *Process
+	ReadyQ   []*Process
+	WaitingQ []*Process
 }
 
 // Run : Start the schedule and process execution
@@ -63,7 +63,7 @@ func (s *Scheduler) Run() {
 		case x, ok := <-s.InMsg:
 			if ok {
 				// New process ready to be executed
-				s.Processes = append(s.Processes, x)
+				s.ReadyQ = append(s.ReadyQ, x)
 
 			} else {
 				// Channel is closed to execution must exit
@@ -74,7 +74,7 @@ func (s *Scheduler) Run() {
 			break
 		}
 
-		for i, curProc := range s.Processes {
+		for i, curProc := range s.ReadyQ {
 			curProc.state = RUN
 
 			// I'm assuming this will get much more complex beyond just subtracting runtime
@@ -83,7 +83,7 @@ func (s *Scheduler) Run() {
 			time.Sleep(100 * time.Millisecond)
 
 			if curProc.runtime <= 0 {
-				s.Processes = remove(s.Processes, i)
+				s.ReadyQ = remove(s.ReadyQ, i)
 			} else {
 				curProc.state = READY
 			}
@@ -110,6 +110,8 @@ func CreateProc(name string, runtime int, mem int) *Process {
 // CreateRandomProcessFromTemplate : Jitter template values to create custom processes
 func CreateRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
 
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+
 	totalRuntime := 0
 	for _, instruction := range instructions {
 		if len(instruction) < 2 {
@@ -135,7 +137,8 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 		instruction[1] = strconv.Itoa(templateRuntime)
 	}
 
-	p := CreateProc("From template: "+templateName, totalRuntime, rand.Intn(100)+1)
+	p := CreateProc("From template: "+templateName, totalRuntime, r.Intn(100)+1)
+	p.state = READY
 	ch <- p
 }
 

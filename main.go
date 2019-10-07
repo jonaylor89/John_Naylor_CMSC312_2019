@@ -122,11 +122,15 @@ func main() {
 			}
 
 		case "len":
-			fmt.Println("processes: ", len(s.Processes), "; queue: ", len(ch))
+			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ))
 
 		case "dump":
 			fmt.Println("process dump:")
-			for _, proc := range s.Processes {
+			for _, proc := range s.ReadyQ {
+				fmt.Println(*proc)
+			}
+
+			for _, proc := range s.WaitingQ {
 				fmt.Println(*proc)
 			}
 
