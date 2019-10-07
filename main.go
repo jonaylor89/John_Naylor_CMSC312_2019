@@ -37,7 +37,8 @@ func main() {
 
 	s := sched.Scheduler{
 		InMsg:     ch,
-		Processes: []*sched.Process{},
+		ReadyQ: []*sched.Process{},
+		WaitingQ: []*sched.Process{},
 	}
 
 	// Run the scheduler
