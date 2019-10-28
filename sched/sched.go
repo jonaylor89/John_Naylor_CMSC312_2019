@@ -9,6 +9,9 @@ import (
 
 const (
 
+	// TimeQuantum : time quantum for process
+	TimeQuantum = 50
+
 	// Process States
 
 	// NEW : process created
@@ -28,9 +31,6 @@ const (
 )
 
 var (
-
-	// TimeQuantum : time quantum for process
-	TimeQuantum = 50
 
 	// ProcNum : PID for the highest process
 	ProcNum int = 0
@@ -54,8 +54,8 @@ type Scheduler struct {
 	WaitingQ []*Process
 }
 
-// Run : Start the schedule and process execution
-func (s *Scheduler) Run() {
+// RunRoundRobin : Start the schedule and process execution
+func (s *Scheduler) RunRoundRobin() {
 	for {
 
 		// Check for new processes to schedule
@@ -140,6 +140,21 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 	p := CreateProc("From template: "+templateName, totalRuntime, r.Intn(100)+1)
 	p.state = READY
 	ch <- p
+}
+
+// ShuffleInstructions : randomize the order of instructions
+func ShuffleInstructions(vals [][]string) {
+	r := rand.New(rand.NewSource(time.Now().Unix()))
+	// We start at the end of the slice, inserting our random
+	// values one at a time.
+	for n := len(vals); n > 0; n-- {
+		randIndex := r.Intn(n)
+		// We swap the value at index n-1 and the random index
+		// to move our randomly chosen value to the end of the
+		// slice, and to move the value that was at n-1 into our
+		// unshuffled portion of the slice.
+		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
+	}
 }
 
 func remove(slice []*Process, s int) []*Process {

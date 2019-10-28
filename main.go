@@ -13,19 +13,6 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )
 
-func shuffleInstructions(vals [][]string) {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	// We start at the end of the slice, inserting our random
-	// values one at a time.
-	for n := len(vals); n > 0; n-- {
-		randIndex := r.Intn(n)
-		// We swap the value at index n-1 and the random index
-		// to move our randomly chosen value to the end of the
-		// slice, and to move the value that was at n-1 into our
-		// unshuffled portion of the slice.
-		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
-	}
-}
 
 func main() {
 
@@ -40,7 +27,7 @@ func main() {
 	}
 
 	// Run the scheduler
-	go s.Run()
+	go s.RunRoundRobin()
 
 	console := bufio.NewReader(os.Stdin)
 	fmt.Println("OS Shell")
@@ -114,7 +101,7 @@ func main() {
 			}
 
 			// Randomize order of isntructions
-			shuffleInstructions(instructions)
+			sched.ShuffleInstructions(instructions)
 
 			for i := 0; i < numOfProc; i++ {
 				go sched.CreateRandomProcessFromTemplate(args[1], instructions, ch)
