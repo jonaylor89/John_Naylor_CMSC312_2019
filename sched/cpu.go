@@ -1,7 +1,9 @@
 
 package sched
 
-
+import (
+	"time"
+)
 
 // CPU : virtual CPU
 type CPU struct {
@@ -11,6 +13,10 @@ type CPU struct {
 }
 
 // RunCycle : execute a cpu cycle
-func (cpu *CPU) RunCycle() {
+func (cpu *CPU) RunCycle(p *Process) {
 
+	cpu.TotalCycles++
+
+	p.runtime--
+	time.Sleep(100 * time.Millisecond)
 }

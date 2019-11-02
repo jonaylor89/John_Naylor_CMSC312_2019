@@ -1,13 +1,12 @@
 package memory
 
 const (
-	pageLength = 256
+	frameLength = 256
 )
 
 var (
 	// pages : pages in secondary memory
 	virtualMemory [1024]Page
-
 )
 
 // RAM : virtual physical memory
