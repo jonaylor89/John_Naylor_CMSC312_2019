@@ -12,7 +12,6 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
-
 func main() {
 
 	// Message channel between main kernel and scheduler
@@ -20,8 +19,8 @@ func main() {
 	defer close(ch)
 
 	s := sched.Scheduler{
-		InMsg:     ch,
-		ReadyQ: []*sched.Process{},
+		InMsg:    ch,
+		ReadyQ:   []*sched.Process{},
 		WaitingQ: []*sched.Process{},
 	}
 

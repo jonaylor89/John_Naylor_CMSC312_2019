@@ -1,0 +1,6 @@
+version: '3'
+services:
+  os:
+    build: .
+    stdin_open: true
+    tty: true

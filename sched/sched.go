@@ -1,9 +1,13 @@
 package sched
 
+import (
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+)
 
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
 	cpu      CPU
+	ram      memory.RAM
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process
@@ -11,7 +15,7 @@ type Scheduler struct {
 }
 
 // PickVictim : Pick a victum process to remove from physical memory
-func PickVictim() {
+func (s *Scheduler) PickVictim() {
 
 }
 
@@ -98,7 +102,6 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 	}
 }
-
 
 func remove(slice []*Process, s int) []*Process {
 	slice[s] = slice[len(slice)-1] // Copy last element to index i.
