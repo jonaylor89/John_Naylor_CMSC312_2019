@@ -3,13 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strconv"
 	"strings"
 	// "time"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
 
@@ -62,48 +62,10 @@ func main() {
 				break
 			}
 
-			f, err := os.Open(args[1])
+			err = utils.LoadTemplate(args[1], numOfProc, ch)
 			if err != nil {
-				fmt.Println("error loading file")
+				fmt.Println("`load` error loading process template")
 				break
-			}
-
-			defer f.Close()
-
-			reader := bufio.NewReader(f)
-
-			var line string
-			var instruction []string
-			var instructions [][]string
-
-			for {
-				line, err = reader.ReadString('\n')
-				if err != nil {
-					break
-				}
-
-				line = strings.ReplaceAll(line, "\n", "")
-				instruction = strings.Split(line, " ")
-
-				if len(instruction) != 2 || (instruction[0] != "CALCULATE" && instruction[0] != "I/O") {
-					// Skip the first few lines with meta data and only work with instructions for now
-					continue
-				}
-
-				instructions = append(instructions, instruction)
-
-			}
-
-			if err != io.EOF {
-				fmt.Printf(" > Failed!: %v\n", err)
-				break
-			}
-
-			// Randomize order of isntructions
-			sched.ShuffleInstructions(instructions)
-
-			for i := 0; i < numOfProc; i++ {
-				go sched.CreateRandomProcessFromTemplate(args[1], instructions, ch)
 			}
 
 		case "len":

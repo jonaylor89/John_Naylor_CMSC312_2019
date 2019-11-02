@@ -6,13 +6,21 @@ import (
 	"fmt"
 )
 
+// Instructions : special type for list of instructions
 type Instructions []byte
 
+// Opcode : an opcode to an instruction
 type Opcode byte
 
 const (
+
+	// CALCULATE : CPU operation
 	CALCULATE Opcode = iota
+
+	// IO : i/o operation
 	IO
+
+	// EXE : Execute the program
 	EXE
 )
 

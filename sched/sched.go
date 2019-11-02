@@ -54,8 +54,8 @@ type Scheduler struct {
 	WaitingQ []*Process
 }
 
-// CreateProc : create a new process correctly
-func CreateProc(name string, runtime int, mem int) *Process {
+// CreateProcess : create a new process correctly
+func CreateProcess(name string, runtime int, mem int) *Process {
 
 	ProcNum++
 
@@ -142,24 +142,9 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 		instruction[1] = strconv.Itoa(templateRuntime)
 	}
 
-	p := CreateProc("From template: "+templateName, totalRuntime, r.Intn(100)+1)
+	p := CreateProcess("From template: "+templateName, totalRuntime, r.Intn(100)+1)
 	p.state = READY
 	ch <- p
-}
-
-// ShuffleInstructions : randomize the order of instructions
-func ShuffleInstructions(vals [][]string) {
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	// We start at the end of the slice, inserting our random
-	// values one at a time.
-	for n := len(vals); n > 0; n-- {
-		randIndex := r.Intn(n)
-		// We swap the value at index n-1 and the random index
-		// to move our randomly chosen value to the end of the
-		// slice, and to move the value that was at n-1 into our
-		// unshuffled portion of the slice.
-		vals[n-1], vals[randIndex] = vals[randIndex], vals[n-1]
-	}
 }
 
 func remove(slice []*Process, s int) []*Process {
