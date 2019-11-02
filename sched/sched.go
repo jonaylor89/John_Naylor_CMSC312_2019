@@ -9,8 +9,7 @@ import (
 
 const (
 
-	// TimeQuantum : time quantum for process
-	TimeQuantum = 50
+
 
 	// Process States
 
@@ -76,6 +75,9 @@ func PickVictim() {
 
 // RunRoundRobin : Start the schedule and process execution
 func (s *Scheduler) RunRoundRobin() {
+	// TimeQuantum : time quantum for process
+	TimeQuantum := 50
+
 	for {
 
 		// Check for new processes to schedule
