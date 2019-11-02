@@ -15,3 +15,19 @@ type Page struct {
 
 }
 
+type Mutex struct {
+	locked bool
+}
+
+func (m *Mutex) acquire() bool {
+	if (m.locked) {
+		return false
+	} else {
+		m.locked = true
+		return true
+	}
+}
+
+func (m *Mutex) release() {
+	m.locked = false	
+}

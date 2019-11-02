@@ -40,11 +40,11 @@ var (
 type Process struct {
 	// Some info should be in a process contol block
 	// And there will be a list of all process control blocks
-	PID     int
-	Name    string
-	state   int
-	runtime int
-	memory  int
+	PID     int     // Process ID
+	Name    string  // Process Name
+	state   int     // Process State
+	runtime int     // Runtime Requirement
+	memory  int     // Memory Requirement
 }
 
 // Scheduler : Controller to schedule process to run
@@ -53,6 +53,22 @@ type Scheduler struct {
 	ReadyQ   []*Process
 	WaitingQ []*Process
 }
+
+// CreateProc : create a new process correctly
+func CreateProc(name string, runtime int, mem int) *Process {
+
+	ProcNum++
+
+	return &Process{
+		PID:     ProcNum,
+		Name:    name,
+		state:   NEW,
+		runtime: runtime,
+		memory:  mem,
+	}
+}
+
+// PickVictim : Pick a victum process to remove from physical memory
 
 // RunRoundRobin : Start the schedule and process execution
 func (s *Scheduler) RunRoundRobin() {
@@ -90,20 +106,6 @@ func (s *Scheduler) RunRoundRobin() {
 
 		}
 
-	}
-}
-
-// CreateProc : create a new process correctly
-func CreateProc(name string, runtime int, mem int) *Process {
-
-	ProcNum++
-
-	return &Process{
-		PID:     ProcNum,
-		Name:    name,
-		state:   NEW,
-		runtime: runtime,
-		memory:  mem,
 	}
 }
 
