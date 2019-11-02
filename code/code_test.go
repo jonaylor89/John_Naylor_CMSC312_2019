@@ -8,9 +8,9 @@ func TestMake(t *testing.T) {
 		operands []int
 		expected []byte
 	}{
-		{CALCULATE, []int{65534}, []byte{byte(CALCULATE), 255, 254}},
+		{CALCULATE, []int{130}, []byte{byte(CALCULATE), 130}},
 		{IO, []int{255}, []byte{byte(IO), 255}},
-		{EXE, []int{}, []byte{byte(EXE), 0}},
+		{EXE, []int{}, []byte{byte(EXE)}},
 	}
 
 	for _, tt := range tests {
@@ -38,7 +38,7 @@ func TestInstructionString(t *testing.T) {
 
 	expected := `0000 EXE
 0001 CALCULATE 1
-0003 IO 2
+0003 I/O 2
 `
 
 	concatted := Instructions{}
@@ -58,9 +58,9 @@ func TestReadOperands(t *testing.T) {
 		operands  []int
 		bytesRead int
 	}{
-		{CALCULATE, []int{65535}, 2},
+		{CALCULATE, []int{130}, 1},
 		{IO, []int{255}, 1},
-		{EXE, []int{}, 1},
+		{EXE, []int{}, 0},
 	}
 
 	for _, tt := range tests {

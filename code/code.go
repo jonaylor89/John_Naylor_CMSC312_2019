@@ -16,15 +16,16 @@ const (
 	EXE
 )
 
+// Definition : definition of an instruction
 type Definition struct {
 	Name          string
 	OperandWidths []int
 }
 
 var definitions = map[Opcode]*Definition{
-	CALCULATE: {"Calculate", []int{2}},
-	IO:        {"I/O", []int{2}},
-	EXE:       {"Exe", []int{}},
+	CALCULATE: {"CALCULATE", []int{1}},
+	IO:        {"I/O", []int{1}},
+	EXE:       {"EXE", []int{}},
 }
 
 // Lookup : associate a opcode with its definition
