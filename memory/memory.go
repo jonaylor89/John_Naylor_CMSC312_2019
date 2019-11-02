@@ -12,9 +12,10 @@ var (
 
 // Page : a page of memory
 type Page struct {
-
+	PID int // Process ID of the process using this page
 }
 
+// Mutex : Mutex lock 
 type Mutex struct {
 	locked bool
 }

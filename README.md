@@ -50,6 +50,19 @@ The available commands for the shell are:
 - exit
     - Exits simulator
 
+# Testing
+
+To execute all tests for the application:
+
+```
+~$ go test ./...
+```
+
+and for an individual module, just:
+
+```
+~$ go test module
+```
 
 # Assignment
 

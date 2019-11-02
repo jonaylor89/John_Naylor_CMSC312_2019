@@ -4,11 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
-	"time"
+	// "time"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )

@@ -69,6 +69,9 @@ func CreateProc(name string, runtime int, mem int) *Process {
 }
 
 // PickVictim : Pick a victum process to remove from physical memory
+func PickVictim() {
+
+}
 
 // RunRoundRobin : Start the schedule and process execution
 func (s *Scheduler) RunRoundRobin() {
