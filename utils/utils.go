@@ -30,9 +30,10 @@ func ShuffleInstructions(vals [][]string) {
 
 // LoadTemplate : load in template process and create process mutations off of it
 func LoadTemplate(filename string, numOfProcesses int, processChan chan *sched.Process) error {
+
 	f, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("error loading file")
+		fmt.Println("error opening file", err)
 		return nil
 	}
 

@@ -40,11 +40,11 @@ var (
 type Process struct {
 	// Some info should be in a process contol block
 	// And there will be a list of all process control blocks
-	PID     int     // Process ID
-	Name    string  // Process Name
-	state   int     // Process State
-	runtime int     // Runtime Requirement
-	memory  int     // Memory Requirement
+	PID     int    // Process ID
+	Name    string // Process Name
+	state   int    // Process State
+	runtime int    // Runtime Requirement
+	memory  int    // Memory Requirement
 }
 
 // Scheduler : Controller to schedule process to run
@@ -52,6 +52,7 @@ type Scheduler struct {
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process
+	// DeviceQ  []*Process
 }
 
 // CreateProcess : create a new process correctly

@@ -51,6 +51,8 @@ func main() {
 				break
 			}
 
+			filename := args[1]
+
 			numOfProc, err := strconv.Atoi(args[2])
 			if err != nil {
 				fmt.Println("Could not get number of processes")
@@ -62,7 +64,7 @@ func main() {
 				break
 			}
 
-			err = utils.LoadTemplate(args[1], numOfProc, ch)
+			err = utils.LoadTemplate(filename, numOfProc, ch)
 			if err != nil {
 				fmt.Println("`load` error loading process template")
 				break
@@ -86,6 +88,7 @@ func main() {
 			return
 
 		default:
+			fmt.Printf("ERROR: Command `%s` not found\n", args[0])
 			break
 
 		}
