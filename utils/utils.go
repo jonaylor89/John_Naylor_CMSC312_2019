@@ -70,6 +70,8 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *sched.P
 
 	// Randomize order of isntructions
 	ShuffleInstructions(instructions)
+	
+	// program := code.Assemble(instructions)
 
 	for i := 0; i < numOfProcesses; i++ {
 		go sched.CreateRandomProcessFromTemplate(filename, instructions, processChan)

@@ -89,6 +89,5 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 	}
 
 	p := CreateProcess("From template: "+templateName, totalRuntime, r.Intn(100)+1)
-	p.state = READY
 	ch <- p
 }

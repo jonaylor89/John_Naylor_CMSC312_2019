@@ -6,17 +6,12 @@ import (
 
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
-	cpu      CPU
-	ram      memory.RAM
+	CPU      CPU
+	RAM      memory.RAM
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process
 	// DeviceQ  []*Process
-}
-
-// PickVictim : Pick a victum process to remove from physical memory
-func (s *Scheduler) PickVictim() {
-
 }
 
 // RunRoundRobin : Start the schedule and process execution
@@ -31,6 +26,9 @@ func (s *Scheduler) RunRoundRobin() {
 		select {
 		case x, ok := <-s.InMsg:
 			if ok {
+
+				x.state = READY
+
 				// New process ready to be executed
 				s.ReadyQ = append(s.ReadyQ, x)
 
@@ -49,7 +47,7 @@ func (s *Scheduler) RunRoundRobin() {
 			// I'm assuming this will get much more complex beyond just subtracting runtime
 			// Fortunately, as of now it is basic round robin execution
 			for j := 0; j < TimeQuantum; j++ {
-				s.cpu.RunCycle(curProc)
+				s.CPU.RunCycle(curProc)
 
 				if curProc.runtime <= 0 {
 					s.ReadyQ = remove(s.ReadyQ, i)
@@ -74,6 +72,9 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 		select {
 		case x, ok := <-s.InMsg:
 			if ok {
+
+				x.state = READY
+
 				// New process ready to be executed
 				s.ReadyQ = append(s.ReadyQ, x)
 
@@ -93,7 +94,7 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 		for {
 
-			s.cpu.RunCycle(curProc)
+			s.CPU.RunCycle(curProc)
 
 			if curProc.runtime <= 0 {
 				break

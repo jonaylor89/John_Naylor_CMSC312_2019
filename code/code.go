@@ -2,7 +2,6 @@ package code
 
 import (
 	"bytes"
-	"encoding/binary"
 	"fmt"
 )
 
@@ -59,8 +58,6 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
-	case 2:
-		return fmt.Sprintf("%s %d %d", def.Name, operands[0], operands[1])
 	}
 
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)
@@ -112,19 +109,12 @@ func Make(op Opcode, operands ...int) []byte {
 		case 1:
 			instruction[offset] = byte(o)
 
-		case 2:
-			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
 		}
 
 		offset += width
 	}
 
 	return instruction
-}
-
-// ReadUint16 : read in a 16 bit unsigned integer
-func ReadUint16(ins Instructions) uint16 {
-	return binary.BigEndian.Uint16(ins)
 }
 
 // ReadUint8 : read in an 8 bit unsigned integer
@@ -141,12 +131,30 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 		switch width {
 		case 1:
 			operands[i] = int(ReadUint8(ins[offset:]))
-		case 2:
-			operands[i] = int(ReadUint16(ins[offset:]))
 		}
 
 		offset += width
 	}
 
 	return operands, offset
+}
+
+// Assemble : Assembly a 2 dimensions string array of opcode and operands into Instructions
+func Assemble(instructions [][]string) Instructions { 
+
+	var program Instructions
+
+	for _, ins := range instructions {
+		switch ins[0] {
+		case "CALCULATE":
+			break
+		case "I/O":
+			break
+		case "EXE":
+			break
+		}
+	}
+
+	return program
+
 }

@@ -12,7 +12,7 @@ var (
 // RAM : virtual physical memory
 type RAM struct {
 	// frames : basically a cache of pages for the simulator because of the lack of hardware
-	frames [256]Page
+	frames []*Page
 }
 
 // Page : a page of memory

@@ -9,6 +9,7 @@ import (
 	// "time"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
@@ -18,7 +19,14 @@ func main() {
 	ch := make(chan *sched.Process, 1000)
 	defer close(ch)
 
+	cpu := sched.CPU{ TotalCycles: 0 }
+	ram := memory.RAM{
+		frames: make([]*memory.Page, 0, memory.frameLength)
+	}
+
 	s := sched.Scheduler{
+		CPU: 	  cpu,
+		RAM: 	  ram,
 		InMsg:    ch,
 		ReadyQ:   []*sched.Process{},
 		WaitingQ: []*sched.Process{},
