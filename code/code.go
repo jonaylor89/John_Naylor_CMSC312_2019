@@ -3,6 +3,8 @@ package code
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
 // Instructions : special type for list of instructions
@@ -108,7 +110,6 @@ func Make(op Opcode, operands ...int) []byte {
 		switch width {
 		case 1:
 			instruction[offset] = byte(o)
-
 		}
 
 		offset += width
@@ -142,11 +143,16 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 // Assemble : Assembly a 2 dimensions string array of opcode and operands into Instructions
 func Assemble(instructions [][]string) Instructions { 
 
-	var program Instructions
+	program := Instructions{}
 
 	for _, ins := range instructions {
 		switch ins[0] {
 		case "CALCULATE":
+
+			op := Make(CALCULATE, utils.StrToIntArray(ins[1:])...)
+
+			program = append(program, op...)
+
 			break
 		case "I/O":
 			break

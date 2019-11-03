@@ -7,6 +7,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 	
@@ -78,4 +79,20 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *sched.P
 	}
 
 	return nil
+}
+
+func StrToIntArray(strArray []string) []int {
+
+	ret := make([]int, 0)
+
+	for _, str := range strArray {
+		intElem, err := strconv.Atoi(str)
+		if err != nil {
+			fmt.Println("error: invalid operand type")
+		}
+
+		ret = append(ret, intElem)
+	}
+
+	return ret
 }
