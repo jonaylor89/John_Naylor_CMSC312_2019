@@ -144,23 +144,23 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 func Assemble(instructions [][]string) Instructions { 
 
 	program := Instructions{}
+	var op []byte
 
 	for _, ins := range instructions {
 		switch ins[0] {
 		case "CALCULATE":
-
-			op := Make(CALCULATE, utils.StrToIntArray(ins[1:])...)
-
-			program = append(program, op...)
-
+			op = Make(CALCULATE, utils.StrToIntArray(ins[1:])...)
 			break
 		case "I/O":
+			op = Make(IO, utils.StrToIntArray(ins[1:])...)
 			break
 		case "EXE":
+			op = Make(IO, utils.StrToIntArray(ins[1:])...)
 			break
 		}
+
+		program = append(program, op...)
 	}
 
 	return program
-
 }
