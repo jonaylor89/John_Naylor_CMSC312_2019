@@ -21,8 +21,8 @@ const (
 	// IO : i/o operation
 	IO
 
-	// EXE : Execute the program
-	EXE
+	// FORK : fork a process
+	FORK
 )
 
 // Definition : definition of an instruction
@@ -34,7 +34,7 @@ type Definition struct {
 var definitions = map[Opcode]*Definition{
 	CALCULATE: {"CALCULATE", []int{1}},
 	IO:        {"I/O", []int{1}},
-	EXE:       {"EXE", []int{}},
+	FORK:       {"FORK", []int{}},
 }
 
 // Lookup : associate a opcode with its definition

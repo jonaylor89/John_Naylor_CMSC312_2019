@@ -6,7 +6,8 @@ type Mutex struct {
 	locked bool
 }
 
-func (m *Mutex) acquire() bool {
+// Acquire : lock the mutex lock
+func (m *Mutex) Acquire() bool {
 	if m.locked {
 		return false
 	} 
@@ -15,6 +16,7 @@ func (m *Mutex) acquire() bool {
 	return true
 }
 
-func (m *Mutex) release() {
+// Release : unlock the mutex lock
+func (m *Mutex) Release() {
 	m.locked = false
 }

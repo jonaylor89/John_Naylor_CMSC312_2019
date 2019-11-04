@@ -1,4 +1,3 @@
-Name: Text Processor 3
 Total runtime: 25
 Memory: 80
 
@@ -11,4 +10,3 @@ I/O 90
 I/O 90
 I/O 90
 CALCULATE 15
-EXE

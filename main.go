@@ -19,7 +19,10 @@ func main() {
 	ch := make(chan *sched.Process, 1000)
 	defer close(ch)
 
-	cpu := sched.CPU{ TotalCycles: 0 }
+	cpu := sched.CPU{ 
+		TotalCycles: 0, 
+		Speed: 100
+	}
 	ram := memory.RAM{
 		frames: make([]*memory.Page, 0, memory.frameLength)
 	}

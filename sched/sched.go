@@ -51,11 +51,10 @@ func (s *Scheduler) RunRoundRobin() {
 
 				if curProc.runtime <= 0 {
 					s.ReadyQ = remove(s.ReadyQ, i)
+					break
 				} else {
 					curProc.state = READY
 				}
-
-				break
 			}
 
 		}
