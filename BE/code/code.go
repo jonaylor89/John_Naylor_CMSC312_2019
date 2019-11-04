@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/utils"
 )
 
 // Instructions : special type for list of instructions

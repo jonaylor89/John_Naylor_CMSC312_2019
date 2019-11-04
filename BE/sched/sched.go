@@ -1,7 +1,7 @@
 package sched
 
 import (
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 )
 
 // Scheduler : Controller to schedule process to run

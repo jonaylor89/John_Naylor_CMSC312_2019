@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 	
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/sched"
 )
 
 // ShuffleInstructions : randomize the order of instructions

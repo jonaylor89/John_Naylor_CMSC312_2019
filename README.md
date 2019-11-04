@@ -8,12 +8,12 @@ will live in the repository.
 
 without docker
 ```sh
-~$ go build -o OS
+~$ go build ./BE -o OS
 ```
 
 with docker
 ```
-~$ docker build -t jonaylor/operatingsystem:os .
+~$ docker build -t jonaylor/operatingsystem:os ./BE
 ```
 
 # Execution
