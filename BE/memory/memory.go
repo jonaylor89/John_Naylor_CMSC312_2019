@@ -1,7 +1,8 @@
 package memory
 
 const (
-	frameLength = 256
+	// FrameLength : length of frame of memory
+	FrameLength = 256
 )
 
 var (

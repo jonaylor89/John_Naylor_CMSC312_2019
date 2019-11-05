@@ -12,7 +12,7 @@ type CPU struct {
 	TotalCycles int
 
 	// Speed : the minimum time between CPU cycles
-	Speed int
+	Speed time.Duration
 }
 
 // RunCycle : execute a cpu cycle

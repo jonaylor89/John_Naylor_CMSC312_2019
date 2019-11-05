@@ -1,7 +1,14 @@
 package sched
 
 import (
+	"bufio"
+	"fmt"
+	"io"
+	"strconv"
+	"os"
+
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/utils"
 )
 
 // Scheduler : Controller to schedule process to run
@@ -101,6 +108,54 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 		}
 
 	}
+}
+
+
+// LoadTemplate : load in template process and create process mutations off of it
+func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process) error {
+
+	f, err := os.Open(filename)
+	if err != nil {
+		fmt.Println("error opening file", err)
+		return nil
+	}
+
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+
+	var instructions [][]string
+
+	procNameField, _ := utils.ReadLine(reader)
+	procName := procNameField[1]
+	procMemoryField, _ := utils.ReadLine(reader)
+	procMemory, _ := strconv.Atoi(procMemoryField[1])
+
+	for {
+		instruction, err := utils.ReadLine(reader)
+		if err != nil {
+			if err != io.EOF {
+				fmt.Printf(" > Failed!: %v\n", err)
+				return err
+			}
+
+			break
+		}
+
+		if len(instruction) != 0 {
+
+			instructions = append(instructions, instruction)
+		}
+	}
+
+	// Randomize order of isntructions
+	utils.ShuffleInstructions(instructions)
+	
+	for i := 0; i < numOfProcesses; i++ {
+		go CreateRandomProcessFromTemplate(procName, procMemory, instructions, processChan)
+	}
+
+	return nil
 }
 
 func remove(slice []*Process, s int) []*Process {

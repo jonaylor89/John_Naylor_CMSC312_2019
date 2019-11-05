@@ -19,7 +19,7 @@ type RAM struct {
 
 // Memory : a thread-safe fixed size LRU Cache.
 type Memory struct {
-	ram  RAM
+	ram  *RAM
 	lock Mutex
 }
 

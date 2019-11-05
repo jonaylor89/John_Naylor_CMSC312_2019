@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/code"
 )
 
 const (
@@ -42,10 +44,11 @@ type Process struct {
 	state   int    // Process State
 	runtime int    // Runtime Requirement
 	memory  int    // Memory Requirement
+	ins 	code.Instructions 
 }
 
 // CreateProcess : create a new process correctly
-func CreateProcess(name string, runtime int, mem int) *Process {
+func CreateProcess(name string, runtime int, mem int, ins code.Instructions) *Process {
 
 	ProcNum++
 
@@ -55,11 +58,12 @@ func CreateProcess(name string, runtime int, mem int) *Process {
 		state:   NEW,
 		runtime: runtime,
 		memory:  mem,
+		ins: 	 ins,
 	}
 }
 
 // CreateRandomProcessFromTemplate : Jitter template values to create custom processes
-func CreateRandomProcessFromTemplate(templateName string, instructions [][]string, ch chan *Process) {
+func CreateRandomProcessFromTemplate(templateName string, memory int, instructions [][]string, ch chan *Process) {
 
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
@@ -69,25 +73,27 @@ func CreateRandomProcessFromTemplate(templateName string, instructions [][]strin
 			continue
 		}
 
-		templateRuntime, err := strconv.Atoi(instruction[1])
+		templateValue, err := strconv.Atoi(instruction[1])
 		if err != nil {
 			fmt.Println("error converting runtime to int", err)
 		}
 
 		// Jitter values by +-20
-		templateRuntime += rand.Intn(20) - 10
+		templateValue += r.Intn(20) - 10
 
-		if templateRuntime < 0 {
-			templateRuntime = 0
+		if templateValue < 0 {
+			templateValue = 0
 		}
 
 		if instruction[0] == "CALCULATE" {
-			totalRuntime += templateRuntime
+			totalRuntime += templateValue
 		}
 
-		instruction[1] = strconv.Itoa(templateRuntime)
+		instruction[1] = strconv.Itoa(templateValue)
 	}
 
-	p := CreateProcess("From template: "+templateName, totalRuntime, r.Intn(100)+1)
+	program := code.Assemble(instructions)
+	
+	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program)
 	ch <- p
 }

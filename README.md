@@ -8,7 +8,8 @@ will live in the repository.
 
 without docker
 ```sh
-~$ go build ./BE -o OS
+~$ cd BE
+~$ go build -o OS
 ```
 
 with docker

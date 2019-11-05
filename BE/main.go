@@ -8,9 +8,8 @@ import (
 	"strings"
 	// "time"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/sched"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 )
 
 func main() {
@@ -21,10 +20,10 @@ func main() {
 
 	cpu := sched.CPU{ 
 		TotalCycles: 0, 
-		Speed: 100
+		Speed: 100,
 	}
 	ram := memory.RAM{
-		frames: make([]*memory.Page, 0, memory.frameLength)
+		// frames: make([]*memory.Page, 0, memory.FrameLength),
 	}
 
 	s := sched.Scheduler{
@@ -74,14 +73,14 @@ func main() {
 				break
 			}
 
-			err = utils.LoadTemplate(filename, numOfProc, ch)
+			err = sched.LoadTemplate(filename, numOfProc, ch)
 			if err != nil {
-				fmt.Println("`load` error loading process template")
+				fmt.Println("`load` error loading process template", err)
 				break
 			}
 
 		case "len":
-			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ))
+			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ), "; sending: ", len(ch))
 
 		case "dump":
 			fmt.Println("process dump:")

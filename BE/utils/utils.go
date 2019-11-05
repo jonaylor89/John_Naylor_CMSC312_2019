@@ -4,14 +4,11 @@ package utils
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"math/rand"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 	
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/sched"
 )
 
 // ShuffleInstructions : randomize the order of instructions
@@ -29,57 +26,20 @@ func ShuffleInstructions(vals [][]string) {
 	}
 }
 
-// LoadTemplate : load in template process and create process mutations off of it
-func LoadTemplate(filename string, numOfProcesses int, processChan chan *sched.Process) error {
+// ReadLine : read and parse line into 2d arrat
+func ReadLine(reader *bufio.Reader) ([]string, error) {
 
-	f, err := os.Open(filename)
+	line, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Println("error opening file", err)
-		return nil
+		return nil, err
 	}
 
-	defer f.Close()
+	line = strings.ReplaceAll(line, "\n", "")
+	elements := strings.Split(line, " ")
 
-	reader := bufio.NewReader(f)
-
-	var line string
-	var instruction []string
-	var instructions [][]string
-
-	for {
-		line, err = reader.ReadString('\n')
-		if err != nil {
-			break
-		}
-
-		line = strings.ReplaceAll(line, "\n", "")
-		instruction = strings.Split(line, " ")
-
-		if len(instruction) != 2 || (instruction[0] != "CALCULATE" && instruction[0] != "I/O") {
-			// Skip the first few lines with meta data and only work with instructions for now
-			continue
-		}
-
-		instructions = append(instructions, instruction)
-
-	}
-
-	if err != io.EOF {
-		fmt.Printf(" > Failed!: %v\n", err)
-		return err
-	}
-
-	// Randomize order of isntructions
-	ShuffleInstructions(instructions)
-	
-	// program := code.Assemble(instructions)
-
-	for i := 0; i < numOfProcesses; i++ {
-		go sched.CreateRandomProcessFromTemplate(filename, instructions, processChan)
-	}
-
-	return nil
+	return elements, nil
 }
+
 
 func StrToIntArray(strArray []string) []int {
 
