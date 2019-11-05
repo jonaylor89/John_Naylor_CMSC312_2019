@@ -22,6 +22,7 @@ func main() {
 		TotalCycles: 0, 
 		Speed: 100,
 	}
+
 	ram := memory.RAM{
 		// frames: make([]*memory.Page, 0, memory.FrameLength),
 	}

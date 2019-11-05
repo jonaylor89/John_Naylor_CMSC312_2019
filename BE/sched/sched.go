@@ -126,12 +126,17 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process
 
 	var instructions [][]string
 
+	// Get process name from the first line
 	procNameField, _ := utils.ReadLine(reader)
 	procName := procNameField[1]
+
+	// Get the process memory requirement from the second line
 	procMemoryField, _ := utils.ReadLine(reader)
 	procMemory, _ := strconv.Atoi(procMemoryField[1])
 
+	// Loop through template file from the instructions
 	for {
+
 		instruction, err := utils.ReadLine(reader)
 		if err != nil {
 			if err != io.EOF {
