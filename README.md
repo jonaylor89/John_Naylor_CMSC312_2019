@@ -86,7 +86,7 @@ All of this must be within a single application, not multiple separate modules.
 
 The requirements for project part 2 (deadline November 10th) are as follows:
 
-- [ ] adding critical sections to your processes (can be implemented e.g., as enclosing selected instruction withing critical section tag)
+- [ ] adding critical sections to your processes (can be implemented e.g., as enclosing selected instruction within critical section tag)
 - [x] implementing one selected critical section resolving algorithm (mutex lock / semaphore / monitor)
 - [ ] adding memory and basic operations on it + taking memory into account when admitting processes into ready state and scheduler
 
