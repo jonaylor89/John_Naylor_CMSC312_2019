@@ -20,5 +20,6 @@ var (
 type Page struct {
 	PID    int // Process ID of the process using this page
 	length int
+	contents [256]byte
 }
 

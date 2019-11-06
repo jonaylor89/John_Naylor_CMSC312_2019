@@ -39,13 +39,14 @@ var (
 type Process struct {
 	// Some info should be in a process contol block
 	// And there will be a list of all process control blocks
-	PID     int    // Process ID
-	Name    string // Process Name
-	state   int    // Process State
-	runtime int    // Runtime Requirement
-	memory  int    // Memory Requirement
-	ins 	code.Instructions 
-	ip		int    // Instruction pointer
+	PID      int    // Process ID
+	Name     string // Process Name
+	state    int    // Process State
+	runtime  int    // Runtime Requirement
+	memory   int    // Memory Requirement
+	children []int  // List of PID to child processes
+	ip		 int    // Instruction pointer
+	ins 	 code.Instructions 
 }
 
 // CreateProcess : create a new process correctly
@@ -54,13 +55,14 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 	ProcNum++
 
 	return &Process{
-		PID:     ProcNum,
-		Name:    name,
-		state:   NEW,
-		runtime: runtime,
-		memory:  mem,
-		ins: 	 ins,
-		ip: 	 insPointer,
+		PID:      ProcNum,
+		Name:     name,
+		state:    NEW,
+		runtime:  runtime,
+		memory:   mem,
+		children: []int{},
+		ip: 	  insPointer,
+		ins: 	  ins,
 	}
 }
 
@@ -68,11 +70,12 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 func (p *Process) Execute() error {
 
 	curIns := p.ins[p.ip]
+	op := code.Opcode(curIns)
 
-	switch (curIns) {
+	switch (op) {
 	case code.CALC:
 		break
-	case.IO:
+	case code.IO:
 		break
 	case code.FORK:
 		break
