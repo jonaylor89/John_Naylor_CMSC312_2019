@@ -67,17 +67,37 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 }
 
 // Execute : execute instruction in process
-func (p *Process) Execute() error {
+func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 	curIns := p.ins[p.ip]
 	op := code.Opcode(curIns)
 
 	switch (op) {
+
 	case code.CALC:
+
+		cpu.RunCycle(p)
+		p.ins[p.ip+1]--
+		time := code.ReadUint8(p.ins[p.ip+1:])
+
+		if time <= 0 {
+			p.ip += 2
+		}
+
 		break
 	case code.IO:
 		break
 	case code.FORK:
+
+		// create child process
+		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip)
+
+		// Add child process to list of children of parent
+		p.children = append(p.children, child.PID)
+
+		// Send child to scheduler
+		ch <- child
+
 		break
 	case code.ENTER:
 		break

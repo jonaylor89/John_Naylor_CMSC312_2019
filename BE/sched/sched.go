@@ -56,9 +56,7 @@ func (s *Scheduler) RunRoundRobin() {
 			for j := 0; j < TimeQuantum; j++ {
 
 
-				// curProc.Execute()
-				
-				s.CPU.RunCycle(curProc)
+				curProc.Execute(s.CPU, s.InMsg)
 
 				if curProc.runtime <= 0 {
 					s.ReadyQ = remove(s.ReadyQ, i)
@@ -104,9 +102,7 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 		for {
 
-			// curProc.Execute()
-
-			s.CPU.RunCycle(curProc)
+			curProc.Execute(s.CPU, s.InMsg)
 
 			if curProc.runtime <= 0 {
 				break
