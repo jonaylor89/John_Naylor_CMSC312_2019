@@ -51,11 +51,13 @@ func (s *Scheduler) RunRoundRobin() {
 		for i, curProc := range s.ReadyQ {
 			curProc.state = RUN
 
-			// I'm assuming this will get much more complex beyond just subtracting runtime
-			// Fortunately, as of now it is basic round robin execution
-			for j := 0; j < TimeQuantum; j++ {
+			timeNull := s.CPU.TotalCycles
+
+			// Only get so many CPU cycles
+			for s.CPU.TotalCycles - timeNull < TimeQuantum {
 
 
+				// Give the process access to the CPU and Process Channel
 				curProc.Execute(s.CPU, s.InMsg)
 
 				if curProc.runtime <= 0 {

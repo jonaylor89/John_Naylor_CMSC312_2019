@@ -77,7 +77,9 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 	case code.CALC:
 
 		cpu.RunCycle(p)
+
 		p.ins[p.ip+1]--
+
 		time := code.ReadUint8(p.ins[p.ip+1:])
 
 		if time <= 0 {
@@ -97,6 +99,8 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 		// Send child to scheduler
 		ch <- child
+
+		p.ip += 1
 
 		break
 	case code.ENTER:
