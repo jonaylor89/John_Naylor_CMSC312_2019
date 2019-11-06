@@ -8,7 +8,7 @@ func TestMake(t *testing.T) {
 		operands []int
 		expected []byte
 	}{
-		{CALCULATE, []int{130}, []byte{byte(CALCULATE), 130}},
+		{CALC, []int{130}, []byte{byte(CALC), 130}},
 		{IO, []int{255}, []byte{byte(IO), 255}},
 		{EXE, []int{}, []byte{byte(EXE)}},
 	}
@@ -37,7 +37,7 @@ func TestInstructionString(t *testing.T) {
 	}
 
 	expected := `0000 EXE
-0001 CALCULATE 1
+0001 CALC 1
 0003 I/O 2
 `
 

@@ -20,7 +20,7 @@ func main() {
 
 	cpu := sched.CPU{ 
 		TotalCycles: 0, 
-		Speed: 100,
+		Speed: 10,
 	}
 
 	ram := memory.RAM{

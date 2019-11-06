@@ -16,13 +16,19 @@ type Opcode byte
 const (
 
 	// CALCULATE : CPU operation
-	CALCULATE Opcode = iota
+	CALC Opcode = iota
 
 	// IO : i/o operation
 	IO
 
 	// FORK : fork a process
 	FORK
+
+	// ENTER : enter critical section
+	ENTER 
+
+	// EXIT : exit critical section
+	EXIT
 )
 
 // Definition : definition of an instruction
@@ -32,9 +38,11 @@ type Definition struct {
 }
 
 var definitions = map[Opcode]*Definition{
-	CALCULATE: {"CALCULATE", []int{1}},
-	IO:        {"I/O", []int{1}},
-	FORK:       {"FORK", []int{}},
+	CALC: {"CALC", []int{1}},
+	IO:        {"IO", []int{1}},
+	FORK:      {"FORK", []int{}},
+	ENTER: 	   {"ENTER", []int{}},
+	EXIT: 	   {"EXIT", []int{}},
 }
 
 // Lookup : associate a opcode with its definition
@@ -148,10 +156,10 @@ func Assemble(instructions [][]string) Instructions {
 
 	for _, ins := range instructions {
 		switch ins[0] {
-		case "CALCULATE":
-			op = Make(CALCULATE, utils.StrToIntArray(ins[1:])...)
+		case "CALC":
+			op = Make(CALC, utils.StrToIntArray(ins[1:])...)
 			break
-		case "I/O":
+		case "IO":
 			op = Make(IO, utils.StrToIntArray(ins[1:])...)
 			break
 		case "EXE":

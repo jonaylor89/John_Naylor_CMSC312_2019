@@ -54,6 +54,10 @@ func (s *Scheduler) RunRoundRobin() {
 			// I'm assuming this will get much more complex beyond just subtracting runtime
 			// Fortunately, as of now it is basic round robin execution
 			for j := 0; j < TimeQuantum; j++ {
+
+
+				// curProc.Execute()
+				
 				s.CPU.RunCycle(curProc)
 
 				if curProc.runtime <= 0 {
@@ -100,6 +104,8 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 		for {
 
+			// curProc.Execute()
+
 			s.CPU.RunCycle(curProc)
 
 			if curProc.runtime <= 0 {
@@ -109,7 +115,6 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 	}
 }
-
 
 // LoadTemplate : load in template process and create process mutations off of it
 func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process) error {
@@ -154,7 +159,7 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process
 	}
 
 	// Randomize order of isntructions
-	utils.ShuffleInstructions(instructions)
+	// utils.ShuffleInstructions(instructions)
 	
 	for i := 0; i < numOfProcesses; i++ {
 		go CreateRandomProcessFromTemplate(procName, procMemory, instructions, processChan)

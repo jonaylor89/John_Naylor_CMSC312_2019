@@ -45,10 +45,11 @@ type Process struct {
 	runtime int    // Runtime Requirement
 	memory  int    // Memory Requirement
 	ins 	code.Instructions 
+	ip		int    // Instruction pointer
 }
 
 // CreateProcess : create a new process correctly
-func CreateProcess(name string, runtime int, mem int, ins code.Instructions) *Process {
+func CreateProcess(name string, runtime int, mem int, ins code.Instructions, insPointer int) *Process {
 
 	ProcNum++
 
@@ -59,7 +60,29 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions) *Pr
 		runtime: runtime,
 		memory:  mem,
 		ins: 	 ins,
+		ip: 	 insPointer,
 	}
+}
+
+// Execute : execute instruction in process
+func (p *Process) Execute() error {
+
+	curIns := p.ins[p.ip]
+
+	switch (curIns) {
+	case code.CALC:
+		break
+	case.IO:
+		break
+	case code.FORK:
+		break
+	case code.ENTER:
+		break
+	case code.EXIT:
+		break
+	}
+
+	return nil
 }
 
 // CreateRandomProcessFromTemplate : Jitter template values to create custom processes
@@ -94,6 +117,8 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 
 	program := code.Assemble(instructions)
 	
-	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program)
+	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0)
 	ch <- p
 }
+
+
