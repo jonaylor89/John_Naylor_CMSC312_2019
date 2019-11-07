@@ -29,6 +29,9 @@ const (
 
 	// EXIT : exit critical section
 	EXIT
+
+	// NOP : No operation
+	NOP 
 )
 
 // Definition : definition of an instruction
@@ -38,11 +41,12 @@ type Definition struct {
 }
 
 var definitions = map[Opcode]*Definition{
-	CALC: {"CALC", []int{1}},
+	CALC: 	   {"CALC", []int{1}},
 	IO:        {"IO", []int{1}},
 	FORK:      {"FORK", []int{}},
 	ENTER: 	   {"ENTER", []int{}},
 	EXIT: 	   {"EXIT", []int{}},
+	NOP:	   {"NOP", []int{}},
 }
 
 // Lookup : associate a opcode with its definition
@@ -162,8 +166,20 @@ func Assemble(instructions [][]string) Instructions {
 		case "IO":
 			op = Make(IO, utils.StrToIntArray(ins[1:])...)
 			break
-		case "EXE":
-			op = Make(IO, utils.StrToIntArray(ins[1:])...)
+		case "ENTER":
+			op = Make(ENTER, utils.StrToIntArray(ins[1:])...)
+			break
+		case "EXIT":
+			op = Make(EXIT, utils.StrToIntArray(ins[1:])...)
+			break
+		case "FORK":
+			op = Make(FORK, utils.StrToIntArray(ins[1:])...)
+			break
+		case "NOP":
+			op = Make(NOP, utils.StrToIntArray(ins[1:])...)
+			break
+		default:
+			op = Make(NOP, utils.StrToIntArray(ins[1:])...)
 			break
 		}
 

@@ -1,8 +1,7 @@
 Name: FORK
 Memory: 80
-
 CALC 10
-I0 90
+IO 90
 FORK
 CALC 15
 CALC 34

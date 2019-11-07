@@ -127,8 +127,6 @@ func (s *Scheduler) recvProc() {
 				// If memory available then set to READY
 				x.state = READY
 
-				fmt.Println(x.String())
-
 				// New process ready to be executed
 				s.ReadyQ = append(s.ReadyQ, x)
 

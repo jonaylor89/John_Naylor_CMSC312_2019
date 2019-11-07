@@ -122,6 +122,8 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 		break
 	case code.EXIT:
 		break
+	case code.NOP:
+		break
 	}
 
 	return nil
@@ -157,7 +159,9 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 		instruction[1] = strconv.Itoa(templateValue)
 	}
 
+	fmt.Println(instructions)
 	program := code.Assemble(instructions)
+	fmt.Println(program)
 	
 	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0)
 	ch <- p
