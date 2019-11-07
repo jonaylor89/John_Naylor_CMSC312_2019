@@ -47,6 +47,7 @@ type Process struct {
 	children []int  // List of PID to child processes
 	ip		 int    // Instruction pointer
 	ins 	 code.Instructions 
+	pages 	 []int
 }
 
 // CreateProcess : create a new process correctly
@@ -63,6 +64,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		children: []int{},
 		ip: 	  insPointer,
 		ins: 	  ins,
+		pages: 	  []int{},
 	}
 }
 
@@ -78,10 +80,12 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 		cpu.RunCycle(p)
 
+		// Subtract one from the time
 		p.ins[p.ip+1]--
 
 		time := code.ReadUint8(p.ins[p.ip+1:])
 
+		// Check if instruction is finished
 		if time <= 0 {
 			p.ip += 2
 		}
@@ -135,7 +139,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 			templateValue = 0
 		}
 
-		if instruction[0] == "CALCULATE" {
+		if instruction[0] == "CALC" {
 			totalRuntime += templateValue
 		}
 

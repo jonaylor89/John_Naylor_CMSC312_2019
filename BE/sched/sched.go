@@ -14,7 +14,7 @@ import (
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
 	CPU      CPU
-	RAM      memory.RAM
+	Mem      memory.Memory
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process
@@ -33,6 +33,11 @@ func (s *Scheduler) RunRoundRobin() {
 		select {
 		case x, ok := <-s.InMsg:
 			if ok {
+
+				// If memory available then set to READY
+				// If memory not available then set to WAITING
+
+				// memory available is defined as free memory being above 2 frames
 
 				x.state = READY
 
@@ -58,9 +63,15 @@ func (s *Scheduler) RunRoundRobin() {
 
 
 				// Give the process access to the CPU and Process Channel
-				curProc.Execute(s.CPU, s.InMsg)
+				err := curProc.Execute(s.CPU, s.InMsg)
+				if err != nil {
+					curProc.state = EXIT
+					s.ReadyQ = remove(s.ReadyQ, i)
+					break
+				}
 
 				if curProc.runtime <= 0 {
+					curProc.state = EXIT
 					s.ReadyQ = remove(s.ReadyQ, i)
 					break
 				} else {
@@ -69,6 +80,8 @@ func (s *Scheduler) RunRoundRobin() {
 			}
 
 		}
+
+		// assessWaiting()
 
 	}
 }
@@ -107,12 +120,17 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 			curProc.Execute(s.CPU, s.InMsg)
 
 			if curProc.runtime <= 0 {
+				curProc.state = EXIT
 				break
 			}
 		}
 
 	}
 }
+
+// func (s *Scheduler) assessWaiting() {
+
+// }
 
 // LoadTemplate : load in template process and create process mutations off of it
 func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process) error {

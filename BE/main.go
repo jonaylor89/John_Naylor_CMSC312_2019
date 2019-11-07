@@ -23,13 +23,17 @@ func main() {
 		Speed: 10,
 	}
 
-	ram := memory.RAM{
-		// frames: make([]*memory.Page, 0, memory.FrameLength),
+	mem := memory.Memory{
+		PageSize: 32,
+		TotalRam: 4096,
+		PageTable: make(map[int]int, 0, TotalRam / PageSize)
+		VirtualMemory: make([]memory.Page, 0)
+		PhysicalMemory: make([]memory.Page, 0, TotalRam / PageSize)
 	}
 
 	s := sched.Scheduler{
 		CPU: 	  cpu,
-		RAM: 	  ram,
+		Mem: 	  mem,
 		InMsg:    ch,
 		ReadyQ:   []*sched.Process{},
 		WaitingQ: []*sched.Process{},
@@ -37,6 +41,7 @@ func main() {
 
 	// Run the scheduler
 	go s.RunRoundRobin()
+	// go s.RunFirstComeFirstServer()
 
 	console := bufio.NewReader(os.Stdin)
 	fmt.Println("OS Shell")

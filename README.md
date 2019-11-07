@@ -93,3 +93,8 @@ The requirements for project part 2 (deadline November 10th) are as follows:
 Please remember that these requirements are minimal requirements for C/D grade. Those of you who aim for A/B grades must be aware that these require much more functionalities to be implemented. You are free to submit additional functionalities within project part 2 for evaluation.
 
 ---------------------------
+
+### Personal TODO
+- Move some things from `sched` struct to a new `kernel` struct
+    - CPU
+    - RAM
