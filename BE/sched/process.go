@@ -107,6 +107,8 @@ func (p *Process) Execute(cpu *CPU, ch chan *Process) error {
 		break
 	case code.FORK:
 
+		p.ip += 1
+
 		// create child process
 		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip)
 
@@ -115,8 +117,6 @@ func (p *Process) Execute(cpu *CPU, ch chan *Process) error {
 
 		// Send child to scheduler
 		ch <- child
-
-		p.ip += 1
 
 		break
 	case code.ENTER:
