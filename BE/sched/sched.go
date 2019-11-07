@@ -131,14 +131,16 @@ func (s *Scheduler) recvProc() {
 				// New process ready to be executed
 				s.ReadyQ = append(s.ReadyQ, x)
 
-				x.pages = s.Mem.Add(x.memory, x.PID)
 			} else {
 				// If memory not available then set to WAIT
 				x.state = WAIT
 
 				// New process waiting for memory
 				s.WaitingQ = append(s.WaitingQ, x)
+
 			}
+
+			x.pages = s.Mem.Add(x.memory, x.PID)
 
 		} else {
 			// Channel is closed to execution must exit
