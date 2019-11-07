@@ -44,7 +44,7 @@ func (s *Scheduler) RunRoundRobin() {
 
 
 				// Give the process access to the CPU and Process Channel
-				err := curProc.Execute(s.CPU, s.InMsg)
+				err := curProc.Execute(s.CPU, s.Mem, s.InMsg)
 				if err != nil {
 
 					curProc.state = EXIT

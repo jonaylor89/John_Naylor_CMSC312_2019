@@ -76,7 +76,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 // }
 
 // Execute : execute instruction in process
-func (p *Process) Execute(cpu *CPU, ch chan *Process) error {
+func (p *Process) Execute(cpu *CPU, mem *memory.Memory, ch chan *Process) error {
 
 	if len(p.ins) <= p.ip {
 		return fmt.Errorf("End of instructions")
@@ -104,6 +104,7 @@ func (p *Process) Execute(cpu *CPU, ch chan *Process) error {
 		break
 	case code.IO:
 		p.ip += 2
+
 		break
 	case code.FORK:
 

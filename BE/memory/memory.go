@@ -113,7 +113,11 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 	m.VirtualMemory = append(m.VirtualMemory, victimPage)
 }
 
+// findVictim : find a process to replace the current one with
 func (m *Memory) findVictim() (int, *Page) {
+
+	// LRU stuff about to go down
+
 	return 0, nil	
 }
 
