@@ -99,8 +99,11 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 }
 
 func (s *Scheduler) assessWaiting() {
-	for _, proc := range s.WaitingQ {	
-		
+	for i, proc := range s.WaitingQ {	
+		if s.memoryCheck() {
+			s.WaitingQ = remove(s.WaitingQ, i)
+			s.ReadyQ = append(s.ReadyQ, proc)
+		}
 	}
 }
 
