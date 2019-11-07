@@ -100,12 +100,12 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 		// Check if instruction is finished
 		if time <= 0 {
-			fmt.Println("HEREEEE")
-			p.ip += 1
+			p.ip += 2
 		}
 
 		break
 	case code.IO:
+		p.ip += 2
 		break
 	case code.FORK:
 
@@ -122,10 +122,16 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 		break
 	case code.ENTER:
+		p.ip += 1
 		break
 	case code.EXIT:
+		p.ip += 1
 		break
 	case code.NOP:
+		p.ip += 1
+		break
+	default:
+		p.ip += 1
 		break
 	}
 

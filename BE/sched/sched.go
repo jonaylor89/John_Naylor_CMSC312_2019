@@ -46,6 +46,7 @@ func (s *Scheduler) RunRoundRobin() {
 				// Give the process access to the CPU and Process Channel
 				err := curProc.Execute(s.CPU, s.InMsg)
 				if err != nil {
+
 					curProc.state = EXIT
 					s.ReadyQ = remove(s.ReadyQ, i)
 					s.Mem.RemovePages(curProc.PID)
