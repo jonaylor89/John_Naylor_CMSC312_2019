@@ -29,30 +29,10 @@ func (s *Scheduler) RunRoundRobin() {
 
 	for {
 
-		// Check for new processes to schedule
-		select {
-		case x, ok := <-s.InMsg:
-			if ok {
+		// Check for new processes
+		s.recvProc()
 
-				// If memory available then set to READY
-				// If memory not available then set to WAITING
-
-				// memory available is defined as free memory being above 2 frames
-
-				x.state = READY
-
-				// New process ready to be executed
-				s.ReadyQ = append(s.ReadyQ, x)
-
-			} else {
-				// Channel is closed to execution must exit
-				return
-			}
-		default:
-			// No new processes
-			break
-		}
-
+		// Loop through processand execute them off a time quantum
 		for i, curProc := range s.ReadyQ {
 			curProc.state = RUN
 
@@ -67,6 +47,7 @@ func (s *Scheduler) RunRoundRobin() {
 				if err != nil {
 					curProc.state = EXIT
 					s.ReadyQ = remove(s.ReadyQ, i)
+					s.Mem.RemovePages(curProc.PID)
 					break
 				}
 
@@ -81,7 +62,8 @@ func (s *Scheduler) RunRoundRobin() {
 
 		}
 
-		// assessWaiting()
+		// Check if waiting processes can be moved to ready
+		s.assessWaiting()
 
 	}
 }
@@ -91,30 +73,15 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 	for {
 
-		// Check for new processes to schedule
-		select {
-		case x, ok := <-s.InMsg:
-			if ok {
-
-				x.state = READY
-
-				// New process ready to be executed
-				s.ReadyQ = append(s.ReadyQ, x)
-
-			} else {
-				// Channel is closed to execution must exit
-				return
-			}
-		default:
-			// No new processes
-			break
-		}
+		// Check for new processes
+		s.recvProc()
 
 		var curProc *Process
 		curProc, s.ReadyQ = s.ReadyQ[0], s.ReadyQ[1:]
 
 		curProc.state = RUN
 
+		// Execute process until it terminates
 		for {
 
 			curProc.Execute(s.CPU, s.InMsg)
@@ -125,12 +92,52 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 			}
 		}
 
+		// Check if waiting processes can be moved to ready
+		s.assessWaiting()
+
 	}
 }
 
-// func (s *Scheduler) assessWaiting() {
+func (s *Scheduler) assessWaiting() {
+	for _, proc := range s.WaitingQ {	
+		
+	}
+}
 
-// }
+func (s *Scheduler) memoryCheck() bool {
+	if len(s.Mem.PhysicalMemory) > 0 {
+		return true
+	}
+
+	return false
+}
+
+func (s *Scheduler) recvProc() {
+
+	// Check for new processes to schedule
+	select {
+	case x, ok := <-s.InMsg:
+		if ok {
+
+			// If memory available then set to READY
+			// If memory not available then set to WAITING
+
+			// memory available is defined as free memory being above 2 frames 
+
+			x.state = READY
+
+			// New process ready to be executed
+			s.ReadyQ = append(s.ReadyQ, x)
+
+		} else {
+			// Channel is closed to execution must exit
+			return
+		}
+	default:
+		// No new processes
+		break
+	}
+}
 
 // LoadTemplate : load in template process and create process mutations off of it
 func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process) error {

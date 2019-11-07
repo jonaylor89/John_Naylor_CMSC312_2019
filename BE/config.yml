@@ -1,0 +1,7 @@
+conf:
+  ProcChanSize: 1000
+  CPU:
+    ClockSpeed: 10
+  Memory:
+    PageSize: 32
+    TotalRam: 4096

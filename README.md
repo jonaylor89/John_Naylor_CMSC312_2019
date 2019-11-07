@@ -98,3 +98,6 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 - Move some things from `sched` struct to a new `kernel` struct
     - CPU
     - RAM
+- Yaml config file
+    - Field for CPU, Memory, etc. etc
+- REPL package

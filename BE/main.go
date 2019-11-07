@@ -26,9 +26,9 @@ func main() {
 	mem := memory.Memory{
 		PageSize: 32,
 		TotalRam: 4096,
-		PageTable: make(map[int]int, 0, TotalRam / PageSize)
-		VirtualMemory: make([]memory.Page, 0)
-		PhysicalMemory: make([]memory.Page, 0, TotalRam / PageSize)
+		PageTable: make(map[int]int),
+		VirtualMemory: make([]*memory.Page, 0),
+		PhysicalMemory: make([]*memory.Page, 0, 4096 / 32),
 	}
 
 	s := sched.Scheduler{
