@@ -26,7 +26,7 @@ type Scheduler struct {
 func (s *Scheduler) RunRoundRobin() {
 
 	// TimeQuantum : time quantum for process
-	TimeQuantum := 50
+	TimeQuantum := 10
 
 	for {
 
@@ -52,13 +52,7 @@ func (s *Scheduler) RunRoundRobin() {
 					break
 				}
 
-				if curProc.runtime <= 0 {
-					curProc.state = EXIT
-					s.ReadyQ = remove(s.ReadyQ, i)
-					break
-				} else {
-					curProc.state = READY
-				}
+				curProc.state = READY
 			}
 
 		}
@@ -107,6 +101,8 @@ func (s *Scheduler) assessWaiting() {
 			proc.state = READY
 
 			s.ReadyQ = append(s.ReadyQ, proc)
+
+			s.Mem.Add(proc.memory, proc.PID)
 		}
 	}
 }
@@ -127,11 +123,16 @@ func (s *Scheduler) recvProc() {
 		if ok {
 
 			if s.memoryCheck() {
+
 				// If memory available then set to READY
 				x.state = READY
 
+				fmt.Println(x.String())
+
 				// New process ready to be executed
 				s.ReadyQ = append(s.ReadyQ, x)
+
+				x.pages = s.Mem.Add(x.memory, x.PID)
 			} else {
 				// If memory not available then set to WAIT
 				x.state = WAIT

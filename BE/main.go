@@ -86,8 +86,12 @@ func main() {
 				break
 			}
 
-		case "len":
+		case "proc":
 			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ), "; sending: ", len(ch))
+
+		case "mem":
+			fmt.Println("Physical len: ", len(mem.PhysicalMemory), "; cap: ", cap(mem.PhysicalMemory))
+			fmt.Println("Virtual len: ", len(mem.VirtualMemory), "; cap: ", cap(mem.VirtualMemory))
 
 		case "dump":
 			fmt.Println("process dump:")

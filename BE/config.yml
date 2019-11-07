@@ -1,5 +1,7 @@
 conf:
   ProcChanSize: 1000
+  Sched:
+    TimeQuatum: 10
   CPU:
     ClockSpeed: 10
   Memory:

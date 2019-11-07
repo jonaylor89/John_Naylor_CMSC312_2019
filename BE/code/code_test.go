@@ -10,7 +10,6 @@ func TestMake(t *testing.T) {
 	}{
 		{CALC, []int{130}, []byte{byte(CALC), 130}},
 		{IO, []int{255}, []byte{byte(IO), 255}},
-		{EXE, []int{}, []byte{byte(EXE)}},
 	}
 
 	for _, tt := range tests {
@@ -31,14 +30,12 @@ func TestMake(t *testing.T) {
 func TestInstructionString(t *testing.T) {
 
 	instructions := []Instructions{
-		Make(EXE),
-		Make(CALCULATE, 1),
+		Make(CALC, 1),
 		Make(IO, 2),
 	}
 
-	expected := `0000 EXE
-0001 CALC 1
-0003 I/O 2
+	expected := `0000 CALC 1
+0002 IO 2
 `
 
 	concatted := Instructions{}
@@ -58,9 +55,8 @@ func TestReadOperands(t *testing.T) {
 		operands  []int
 		bytesRead int
 	}{
-		{CALCULATE, []int{130}, 1},
+		{CALC, []int{130}, 1},
 		{IO, []int{255}, 1},
-		{EXE, []int{}, 0},
 	}
 
 	for _, tt := range tests {
@@ -81,5 +77,23 @@ func TestReadOperands(t *testing.T) {
 				t.Errorf("operand wrong. want=%d, got=%d", want, operandsRead[i])
 			}
 		}
+	}
+}
+
+func TestAssemble(t *testing.T) {
+	instructions := [][]string{
+		[]string{"CALC", "32"},
+		[]string{"IO", "14"},
+	}
+
+	expected := `0000 CALC 32
+0002 IO 14
+`
+
+	program := Assemble(instructions)
+
+	if program.String() != expected {
+		t.Errorf("instructions wrongly formatted.\nwant=%q\ngot=%q",
+			expected, program.String())
 	}
 }
