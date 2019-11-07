@@ -18,6 +18,7 @@ type Scheduler struct {
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process
+	MinimumFreeFrames int
 	// DeviceQ  []*Process
 }
 
@@ -108,7 +109,7 @@ func (s *Scheduler) assessWaiting() {
 }
 
 func (s *Scheduler) memoryCheck() bool {
-	if len(s.Mem.PhysicalMemory) > 0 {
+	if cap(s.Mem.PhysicalMemory) - len(s.Mem.PhysicalMemory) > s.MinimumFreeFrames {
 		return true
 	}
 

@@ -37,6 +37,7 @@ func main() {
 		InMsg:    ch,
 		ReadyQ:   []*sched.Process{},
 		WaitingQ: []*sched.Process{},
+		MinimumFreeFrames: 8,
 	}
 
 	// Run the scheduler
