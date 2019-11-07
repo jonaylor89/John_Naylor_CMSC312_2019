@@ -18,12 +18,12 @@ func main() {
 	ch := make(chan *sched.Process, 1000)
 	defer close(ch)
 
-	cpu := sched.CPU{ 
+	cpu := &sched.CPU{ 
 		TotalCycles: 0, 
 		Speed: 10,
 	}
 
-	mem := memory.Memory{
+	mem := &memory.Memory{
 		PageSize: 32,
 		TotalRam: 4096,
 		PageTable: make(map[int]int),
@@ -31,7 +31,7 @@ func main() {
 		PhysicalMemory: make([]*memory.Page, 0, 4096 / 32),
 	}
 
-	s := sched.Scheduler{
+	s := &sched.Scheduler{
 		CPU: 	  cpu,
 		Mem: 	  mem,
 		InMsg:    ch,
@@ -90,8 +90,8 @@ func main() {
 			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ), "; sending: ", len(ch))
 
 		case "mem":
-			fmt.Println("Physical len: ", len(mem.PhysicalMemory), "; cap: ", cap(mem.PhysicalMemory))
-			fmt.Println("Virtual len: ", len(mem.VirtualMemory), "; cap: ", cap(mem.VirtualMemory))
+			fmt.Println("Physical len: ", len(s.Mem.PhysicalMemory), "; cap: ", cap(s.Mem.PhysicalMemory))
+			fmt.Println("Virtual len: ", len(s.Mem.VirtualMemory), "; cap: ", cap(s.Mem.VirtualMemory))
 
 		case "dump":
 			fmt.Println("process dump:")

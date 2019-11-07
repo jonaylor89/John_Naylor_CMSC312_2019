@@ -13,8 +13,8 @@ import (
 
 // Scheduler : Controller to schedule process to run
 type Scheduler struct {
-	CPU      CPU
-	Mem      memory.Memory
+	CPU      *CPU
+	Mem      *memory.Memory
 	InMsg    chan *Process
 	ReadyQ   []*Process
 	WaitingQ []*Process

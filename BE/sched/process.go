@@ -69,14 +69,14 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 }
 
 // String : string reporesentation of process
-func (p Process) String() string {
-	return fmt.Sprintf("Name: %s ;Instructions: %s", 
-					p.Name,
-					p.ins)
-}
+// func (p Process) String() string {
+// 	return fmt.Sprintf("Name: %s ;Instructions: %s", 
+// 					p.Name,
+// 					p.ins)
+// }
 
 // Execute : execute instruction in process
-func (p *Process) Execute(cpu CPU, ch chan *Process) error {
+func (p *Process) Execute(cpu *CPU, ch chan *Process) error {
 
 	if len(p.ins) <= p.ip {
 		return fmt.Errorf("End of instructions")
