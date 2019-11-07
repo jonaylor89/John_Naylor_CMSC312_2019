@@ -69,7 +69,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 }
 
 // String : string reporesentation of process
-func (p *Process) String() string {
+func (p Process) String() string {
 	return fmt.Sprintf("Name: %s ;Instructions: %s", 
 					p.Name,
 					p.ins)
@@ -85,6 +85,8 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 	curIns := p.ins[p.ip]
 	op := code.Opcode(curIns)
 
+	fmt.Println("Instructions", p.ins[p.ip:], "opcode", curIns, "ip", p.ip)
+
 	switch (op) {
 
 	case code.CALC:
@@ -98,6 +100,7 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 
 		// Check if instruction is finished
 		if time <= 0 {
+			fmt.Println("HEREEEE")
 			p.ip += 1
 		}
 
@@ -159,9 +162,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 		instruction[1] = strconv.Itoa(templateValue)
 	}
 
-	fmt.Println(instructions)
 	program := code.Assemble(instructions)
-	fmt.Println(program)
 	
 	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0)
 	ch <- p

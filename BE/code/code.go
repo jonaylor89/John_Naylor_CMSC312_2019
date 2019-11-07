@@ -87,6 +87,7 @@ func (ins Instructions) String() string {
 			fmt.Fprintf(&out, "ERROR: %s\n", err)
 			continue
 		}
+		
 
 		operands, read := ReadOperands(def, ins[i+1:])
 

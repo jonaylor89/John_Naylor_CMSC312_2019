@@ -44,8 +44,10 @@ The available commands for the shell are:
     - Load in template file and create processes from it
     - e.g. load ProgramFiles/temp1.txt 1000
         - load template 1 and create 1000 processes
-- len
+- proc
     - Lists number of processes in scheduler queue
+- mem
+    - Displays memory
 - dump
     - Dumps all processes with info
 - exit
