@@ -103,6 +103,9 @@ func (s *Scheduler) assessWaiting() {
 	for i, proc := range s.WaitingQ {	
 		if s.memoryCheck() {
 			s.WaitingQ = remove(s.WaitingQ, i)
+
+			proc.state = READY
+
 			s.ReadyQ = append(s.ReadyQ, proc)
 		}
 	}
@@ -123,15 +126,19 @@ func (s *Scheduler) recvProc() {
 	case x, ok := <-s.InMsg:
 		if ok {
 
-			// If memory available then set to READY
-			// If memory not available then set to WAITING
+			if s.memoryCheck() {
+				// If memory available then set to READY
+				x.state = READY
 
-			// memory available is defined as free memory being above 2 frames 
+				// New process ready to be executed
+				s.ReadyQ = append(s.ReadyQ, x)
+			} else {
+				// If memory not available then set to WAIT
+				x.state = WAIT
 
-			x.state = READY
-
-			// New process ready to be executed
-			s.ReadyQ = append(s.ReadyQ, x)
+				// New process waiting for memory
+				s.WaitingQ = append(s.WaitingQ, x)
+			}
 
 		} else {
 			// Channel is closed to execution must exit
