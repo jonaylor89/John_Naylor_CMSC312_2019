@@ -1,6 +1,7 @@
 package memory
 
 import (
+	// "fmt"
 	"math"
 )
 
@@ -120,7 +121,8 @@ func (m *Memory) findVictim() (int, *Page) {
 func (m *Memory) RemovePages(pid int) {
 
 	// Remove pages from physical memory
-	for i, page := range m.PhysicalMemory {
+	for i := len(m.PhysicalMemory)-1; i >= 0; i-- {
+		page := m.PhysicalMemory[i]
 		if page.ProcID == pid {
 			m.PhysicalMemory = remove(m.PhysicalMemory, i)
 
@@ -130,8 +132,10 @@ func (m *Memory) RemovePages(pid int) {
 	}	
 
 	// Remove pages from virtual memory
-	for i, page := range m.VirtualMemory {
+	for i := len(m.VirtualMemory)-1; i >= 0; i-- {
+		page := m.VirtualMemory[i]
 		if page.ProcID == pid {
+
 			m.VirtualMemory = remove(m.VirtualMemory, i)
 		}
 	}

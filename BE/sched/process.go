@@ -85,8 +85,6 @@ func (p *Process) Execute(cpu CPU, ch chan *Process) error {
 	curIns := p.ins[p.ip]
 	op := code.Opcode(curIns)
 
-	fmt.Println("Instructions", p.ins[p.ip:], "opcode", curIns, "ip", p.ip)
-
 	switch (op) {
 
 	case code.CALC:
