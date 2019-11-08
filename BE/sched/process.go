@@ -67,7 +67,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		ip: 	  insPointer,
 		ins: 	  ins,
 		pages: 	  []int{},
-		Critical: false
+		Critical: false,
 	}
 }
 

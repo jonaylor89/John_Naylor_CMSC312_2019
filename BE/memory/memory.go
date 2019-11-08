@@ -22,7 +22,7 @@ type Memory struct {
 	// VirtualMemory : pages in secondary memory
 	VirtualMemory []*Page
 
-	// PhysicalMemory : Memory frames in RAM
+	// PhysicalMemory : Memory in RAM
 	PhysicalMemory []*Page
 }
 
@@ -121,9 +121,9 @@ func (m *Memory) findVictim(procID int) (int, *Page) {
 
 
 	// Literally just find the first page with the same process ID lol
-	for k, v := range m.PageTable {
-		if PhysicalMemory[v].ProcID == procID {
-			return v, PhyiscalMemory[v]
+	for _, v := range m.PageTable {
+		if m.PhysicalMemory[v].ProcID == procID {
+			return v, m.PhysicalMemory[v]
 		}
 	}
 
