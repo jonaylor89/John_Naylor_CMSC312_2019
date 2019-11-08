@@ -40,7 +40,7 @@ func (s *Scheduler) RunRoundRobin() {
 			timeNull := s.CPU.TotalCycles
 
 			// Only get so many CPU cycles
-			for s.CPU.TotalCycles - timeNull < TimeQuantum {
+			for s.CPU.TotalCycles - timeNull < TimeQuantum && !curProc.Critical {
 
 
 				// Give the process access to the CPU and Process Channel

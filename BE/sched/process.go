@@ -49,6 +49,7 @@ type Process struct {
 	ip		 int    // Instruction pointer
 	ins 	 code.Instructions 
 	pages 	 []int  // memory pages owned by process
+	Critical bool   // is the process in the critical section
 }
 
 // CreateProcess : create a new process correctly
@@ -66,6 +67,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		ip: 	  insPointer,
 		ins: 	  ins,
 		pages: 	  []int{},
+		Critical: false
 	}
 }
 
@@ -124,9 +126,13 @@ func (p *Process) Execute(cpu *CPU, mem *memory.Memory, ch chan *Process) error 
 		break
 	case code.ENTER:
 		p.ip += 1
+
+		p.Critical = true
 		break
 	case code.EXIT:
 		p.ip += 1
+
+		p.Critical = false
 		break
 	case code.NOP:
 		p.ip += 1
