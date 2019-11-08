@@ -80,7 +80,7 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 		// Execute process until it terminates
 		for {
 
-			curProc.Execute(s.CPU, s.InMsg)
+			curProc.Execute(s.CPU, s.Mem, s.InMsg)
 
 			if curProc.runtime <= 0 {
 				curProc.state = EXIT

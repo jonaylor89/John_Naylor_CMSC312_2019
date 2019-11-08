@@ -73,7 +73,7 @@ func (m *Memory) Add(requirement int, pid int) []int {
 		p := &Page{
 			PageID: pageNum,
 			ProcID: pid,
-			contents: make([]byte, 0, 256),
+			contents: make([]byte, 0, 30),
 		}
 
 		pageIds = append(pageIds, pageNum)
