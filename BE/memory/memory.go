@@ -119,8 +119,8 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 // findVictim : find a process to replace the current one with
 func (m *Memory) findVictim(procID int) (int, *Page) {
 
-	// LRU stuff about to go down
 
+	// Literally just find the first page with the same process ID lol
 	for k, v := range m.PageTable {
 		if PhysicalMemory[v].ProcID == procID {
 			return v, PhyiscalMemory[v]
