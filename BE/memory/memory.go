@@ -100,7 +100,10 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 	// if there isn't an empty space, run a replace procedure
 
 	// Find victim page
-	i, victimPage := m.findVictim()	
+	i, victimPage := m.findVictim(p.ProcID)	
+	if i == -1 {
+		return
+	}
 
 	// Fill victim page's spot
 	m.PhysicalMemory[i] = p
@@ -114,11 +117,17 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 }
 
 // findVictim : find a process to replace the current one with
-func (m *Memory) findVictim() (int, *Page) {
+func (m *Memory) findVictim(procID int) (int, *Page) {
 
 	// LRU stuff about to go down
 
-	return 0, nil	
+	for k, v := range m.PageTable {
+		if PhysicalMemory[v].ProcID == procID {
+			return v, PhyiscalMemory[v]
+		}
+	}
+
+	return -1, nil	
 }
 
 // RemovePages : remove all pages associated with a pid
