@@ -1,0 +1,8 @@
+version: '3'
+services:
+  os:
+    build: ./BE
+  web:
+    build: ./FE
+    ports:
+      - 8000:8000

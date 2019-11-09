@@ -8,12 +8,13 @@ will live in the repository.
 
 without docker
 ```sh
+~$ cd BE
 ~$ go build -o OS
 ```
 
 with docker
 ```
-~$ docker build -t jonaylor/operatingsystem:os .
+~$ docker build -t jonaylor/operatingsystem:os ./BE
 ```
 
 # Execution
@@ -43,13 +44,28 @@ The available commands for the shell are:
     - Load in template file and create processes from it
     - e.g. load ProgramFiles/temp1.txt 1000
         - load template 1 and create 1000 processes
-- len
+- proc
     - Lists number of processes in scheduler queue
+- mem
+    - Displays memory
 - dump
     - Dumps all processes with info
 - exit
     - Exits simulator
 
+# Testing
+
+To execute all tests for the application:
+
+```
+~$ go test ./...
+```
+
+and for an individual module, just:
+
+```
+~$ go test module
+```
 
 # Assignment
 
@@ -67,3 +83,26 @@ The requirements for project part 1 (deadline October 6th) are as follows:
 All of this must be within a single application, not multiple separate modules.
 
 ---------------------
+
+### Part two
+
+The requirements for project part 2 (deadline November 10th) are as follows:
+
+- [x] adding critical sections to your processes (can be implemented e.g., as enclosing selected instruction within critical section tag)
+- [x] implementing one selected critical section resolving algorithm (mutex lock / semaphore / monitor)
+- [x] adding memory and basic operations on it + taking memory into account when admitting processes into ready state and scheduler
+
+Please remember that these requirements are minimal requirements for C/D grade. Those of you who aim for A/B grades must be aware that these require much more functionalities to be implemented. You are free to submit additional functionalities within project part 2 for evaluation.
+
+---------------------------
+
+### Personal TODO
+- Move some things from `sched` struct to a new `kernel` struct
+    - CPU
+    - RAM
+- Yaml config file
+    - Field for CPU, Memory, etc. etc
+- REPL package
+- Add interprocess opcodes
+    - SEND: send signal
+    - RECV: send signal
