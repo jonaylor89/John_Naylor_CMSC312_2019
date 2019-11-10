@@ -24,7 +24,7 @@ RUN yarn run pkg
 ################### STAGE 2 #################################
 
 # And then copy pkg binary from that stage to the smaller base image
-FROM alpine:3.7
+FROM alpine:latest
 
 RUN apk update && \
   apk add --no-cache libstdc++ libgcc ca-certificates && \
