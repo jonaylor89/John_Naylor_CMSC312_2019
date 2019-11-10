@@ -2,14 +2,23 @@
   "name": "fe",
   "version": "0.1.0",
   "private": true,
+  "bin": "server.js",
+  "pkg": {
+    "scripts": "build/**/*.js",
+    "assets": "views/**/*"
+  },
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "NODE_ENV=production node server.js",
+    "pkg": "pkg . --targets node12-alpine-x64 --out-path pkg"
   },
   "dependencies": {
     "next": "9.1.2",
     "react": "16.11.0",
     "react-dom": "16.11.0"
+  },
+  "devDependencies": {
+    "pkg": "^4.4.0"
   }
 }

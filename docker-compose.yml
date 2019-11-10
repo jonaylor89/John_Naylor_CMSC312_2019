@@ -5,4 +5,4 @@ services:
   web:
     build: ./FE
     ports:
-      - 8000:8000
+      - 3003:3003
