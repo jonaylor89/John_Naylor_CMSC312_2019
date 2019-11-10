@@ -4,8 +4,8 @@
   "private": true,
   "bin": "server.js",
   "pkg": {
-    "scripts": "build/**/*.js",
-    "assets": "views/**/*"
+    "scripts": ".next/**/*.js",
+    "assets": ".next/**/*"
   },
   "scripts": {
     "dev": "node server.js",
