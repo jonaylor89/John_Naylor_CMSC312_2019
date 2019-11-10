@@ -106,3 +106,4 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 - Add interprocess opcodes
     - SEND: send signal
     - RECV: send signal
+- Make process ingestion faster
