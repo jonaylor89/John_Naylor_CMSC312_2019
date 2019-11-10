@@ -4,6 +4,8 @@ package server
 import (
 	"fmt"
 	"net/http"
+
+	// "github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
