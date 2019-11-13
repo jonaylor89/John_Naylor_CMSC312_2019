@@ -1,4 +1,4 @@
-package sched
+package kernel
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/code"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
 )
 
 const (
@@ -79,7 +80,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 // }
 
 // Execute : execute instruction in process
-func (p *Process) Execute(cpu *CPU, mem *memory.Memory, ch chan *Process) error {
+func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process) error {
 
 
 	if len(p.ins) <= p.ip {
@@ -93,7 +94,7 @@ func (p *Process) Execute(cpu *CPU, mem *memory.Memory, ch chan *Process) error 
 
 	case code.CALC:
 
-		cpu.RunCycle(p)
+		cpu.RunCycle(p.runtime)
 
 		// Subtract one from the time
 		p.ins[p.ip+1]--

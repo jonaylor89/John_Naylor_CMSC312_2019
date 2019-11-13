@@ -8,18 +8,19 @@ import (
 	"strings"
 	// "time"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/sched"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/kernel"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
-	// "github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/server"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/server"
 )
 
 func main() {
 
 	// Message channel between main kernel and scheduler
-	ch := make(chan *sched.Process, 1000)
+	ch := make(chan *kernel.Process, 1000)
 	defer close(ch)
 
-	cpu := &sched.CPU{ 
+	cpu := &cpu.CPU{ 
 		TotalCycles: 0, 
 		Speed: 10,
 	}
@@ -32,18 +33,20 @@ func main() {
 		PhysicalMemory: make([]*memory.Page, 0, 4096 / 32),
 	}
 
-	s := &sched.Scheduler{
+	k := &kernel.Kernel{
 		CPU: 	  cpu,
 		Mem: 	  mem,
 		InMsg:    ch,
-		ReadyQ:   []*sched.Process{},
-		WaitingQ: []*sched.Process{},
+		ReadyQ:   []*kernel.Process{},
+		WaitingQ: []*kernel.Process{},
 		MinimumFreeFrames: 8,
 	}
 
 	// Run the scheduler
-	go s.RunRoundRobin()
-	// go s.RunFirstComeFirstServer()
+	go k.RunRoundRobin()
+	// go k.RunFirstComeFirst
+	
+	go server.StartServer(k)
 
 	console := bufio.NewReader(os.Stdin)
 	fmt.Println("OS Shell")
@@ -81,26 +84,26 @@ func main() {
 				break
 			}
 
-			err = sched.LoadTemplate(filename, numOfProc, ch)
+			err = kernel.LoadTemplate(filename, numOfProc, ch)
 			if err != nil {
 				fmt.Println("`load` error loading process template", err)
 				break
 			}
 
 		case "proc":
-			fmt.Println("ready: ", len(s.ReadyQ), "; waiting: ", len(s.WaitingQ), "; sending: ", len(ch))
+			fmt.Println("ready: ", len(k.ReadyQ), "; waiting: ", len(k.WaitingQ), "; sending: ", len(ch))
 
 		case "mem":
-			fmt.Println("Physical len: ", len(s.Mem.PhysicalMemory), "; cap: ", cap(s.Mem.PhysicalMemory))
-			fmt.Println("Virtual len: ", len(s.Mem.VirtualMemory), "; cap: ", cap(s.Mem.VirtualMemory))
+			fmt.Println("Physical len: ", len(k.Mem.PhysicalMemory), "; cap: ", cap(k.Mem.PhysicalMemory))
+			fmt.Println("Virtual len: ", len(k.Mem.VirtualMemory), "; cap: ", cap(k.Mem.VirtualMemory))
 
 		case "dump":
 			fmt.Println("process dump:")
-			for _, proc := range s.ReadyQ {
+			for _, proc := range k.ReadyQ {
 				fmt.Println(*proc)
 			}
 
-			for _, proc := range s.WaitingQ {
+			for _, proc := range k.WaitingQ {
 				fmt.Println(*proc)
 			}
 

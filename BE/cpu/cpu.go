@@ -1,5 +1,5 @@
 
-package sched
+package cpu
 
 import (
 	"time"
@@ -16,10 +16,10 @@ type CPU struct {
 }
 
 // RunCycle : execute a cpu cycle
-func (cpu *CPU) RunCycle(p *Process) {
+func (cpu *CPU) RunCycle(runtime int) {
 
 	cpu.TotalCycles++
 
-	p.runtime--
+	runtime--
 	time.Sleep(cpu.Speed * time.Millisecond)
 }
