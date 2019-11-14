@@ -1,9 +1,14 @@
-conf:
-  ProcChanSize: 1000
-  Sched:
-    TimeQuatum: 10
-  CPU:
-    ClockSpeed: 10
-  Memory:
-    PageSize: 32
-    TotalRam: 4096
+# Maximum number of processes that can be sent to the kernel
+ProcChanSize: 1000
+MinimumFreeFrames: 8
+Sched:
+  TimeQuantum: 50
+CPU:
+  # Lower means faster
+  ClockSpeed: 10
+Memory:
+  # Should be a power of 2
+  PageSize: 32
+
+  # Should be a power of 2
+  TotalRam: 4096

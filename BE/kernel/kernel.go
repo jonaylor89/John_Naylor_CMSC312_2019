@@ -20,15 +20,13 @@ type Kernel struct {
 	ReadyQ            []*Process
 	WaitingQ          []*Process
 	MinimumFreeFrames int
+	TimeQuantum int
 	Mailboxes         []chan byte
 	// DeviceQ  []*Process
 }
 
 // RunRoundRobin : Start the schedule and process execution
 func (k *Kernel) RunRoundRobin() {
-
-	// TimeQuantum : time quantum for process
-	TimeQuantum := 10
 
 	// Check for new processes
 	go k.recvProc()
@@ -44,7 +42,7 @@ func (k *Kernel) RunRoundRobin() {
 			timeNull := k.CPU.TotalCycles
 
 			// Only get so many CPU cycles
-			for k.CPU.TotalCycles-timeNull < TimeQuantum && !curProc.Critical {
+			for k.CPU.TotalCycles-timeNull < k.TimeQuantum && !curProc.Critical {
 
 				// Give the process access to the CPU and Process Channel
 				err := curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)

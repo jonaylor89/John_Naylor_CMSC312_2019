@@ -12,25 +12,28 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/server"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/config"
 )
 
 func main() {
 
-	// Message channel between main kernel and scheduler
-	ch := make(chan *kernel.Process, 1000)
+	conf := config.ReadConfig("config.yml")
+
+	// Message channel to kernel
+	ch := make(chan *kernel.Process, conf.ProcChanSize)
 	defer close(ch)
 
 	cpu := &cpu.CPU{ 
 		TotalCycles: 0, 
-		Speed: 10,
+		Speed: conf.CPU.ClockSpeed,
 	}
 
 	mem := &memory.Memory{
-		PageSize: 32,
-		TotalRam: 4096,
+		PageSize: conf.Memory.PageSize,
+		TotalRam: conf.Memory.TotalRam,
 		PageTable: make(map[int]int),
 		VirtualMemory: make([]*memory.Page, 0),
-		PhysicalMemory: make([]*memory.Page, 0, 4096 / 32),
+		PhysicalMemory: make([]*memory.Page, 0, conf.Memory.TotalRam / conf.Memory.PageSize),
 	}
 
 	k := &kernel.Kernel{
@@ -39,7 +42,8 @@ func main() {
 		InMsg:    ch,
 		ReadyQ:   []*kernel.Process{},
 		WaitingQ: []*kernel.Process{},
-		MinimumFreeFrames: 8,
+		MinimumFreeFrames: conf.MinimumFreeFrames,
+		TimeQuantum: conf.Sched.TimeQuantum,
 		Mailboxes: []chan byte {
 			make(chan byte, 10),
 			make(chan byte, 10),

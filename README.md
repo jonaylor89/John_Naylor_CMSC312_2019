@@ -97,6 +97,5 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 ---------------------------
 
 ### Personal TODO
-- Yaml config file
-    - Field for CPU, Memory, etc. etc
 - REPL package
+- Comment everything
