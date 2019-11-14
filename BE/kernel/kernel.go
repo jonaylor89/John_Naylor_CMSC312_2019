@@ -4,23 +4,23 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"strconv"
 	"os"
+	"strconv"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/utils"
 )
 
 // Kernel : manager for resources and controller to schedule process to run
 type Kernel struct {
-	CPU      *cpu.CPU
-	Mem      *memory.Memory
-	InMsg    chan *Process
-	ReadyQ   []*Process
-	WaitingQ []*Process
+	CPU               *cpu.CPU
+	Mem               *memory.Memory
+	InMsg             chan *Process
+	ReadyQ            []*Process
+	WaitingQ          []*Process
 	MinimumFreeFrames int
-	Mailboxes []chan byte
+	Mailboxes         []chan byte
 	// DeviceQ  []*Process
 }
 
@@ -30,20 +30,21 @@ func (k *Kernel) RunRoundRobin() {
 	// TimeQuantum : time quantum for process
 	TimeQuantum := 10
 
+	// Check for new processes
+	go k.recvProc()
+
 	for {
 
-		// Check for new processes
-		k.recvProc()
+		// Loop through processes backwards and execute them off a time quantum
+		for i := len(k.ReadyQ) - 1; i > 0; i-- {
+			curProc := k.ReadyQ[i]
 
-		// Loop through processand execute them off a time quantum
-		for i, curProc := range k.ReadyQ {
 			curProc.state = RUN
 
 			timeNull := k.CPU.TotalCycles
 
 			// Only get so many CPU cycles
-			for k.CPU.TotalCycles - timeNull < TimeQuantum && !curProc.Critical {
-
+			for k.CPU.TotalCycles-timeNull < TimeQuantum && !curProc.Critical {
 
 				// Give the process access to the CPU and Process Channel
 				err := curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
@@ -69,25 +70,29 @@ func (k *Kernel) RunRoundRobin() {
 // RunFirstComeFirstServe : First come first serve algorithm
 func (k *Kernel) RunFirstComeFirstServe() {
 
+	// Check for new processes
+	go k.recvProc()
+
 	for {
 
-		// Check for new processes
-		k.recvProc()
+		if len(k.ReadyQ) > 0 {
 
-		var curProc *Process
-		curProc, k.ReadyQ = k.ReadyQ[0], k.ReadyQ[1:]
+			var curProc *Process
+			curProc, k.ReadyQ = k.ReadyQ[0], k.ReadyQ[1:]
 
-		curProc.state = RUN
+			curProc.state = RUN
 
-		// Execute process until it terminates
-		for {
+			// Execute process until it terminates
+			for {
 
-			curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
+				curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
 
-			if curProc.runtime <= 0 {
-				curProc.state = EXIT
-				break
+				if curProc.runtime <= 0 {
+					curProc.state = EXIT
+					break
+				}
 			}
+
 		}
 
 		// Check if waiting processes can be moved to ready
@@ -97,7 +102,9 @@ func (k *Kernel) RunFirstComeFirstServe() {
 }
 
 func (k *Kernel) assessWaiting() {
-	for i, proc := range k.WaitingQ {	
+	for i := len(k.WaitingQ) - 1; i > 0; i-- {
+		proc := k.WaitingQ[i]
+
 		if k.memoryCheck() {
 			k.WaitingQ = remove(k.WaitingQ, i)
 
@@ -111,7 +118,7 @@ func (k *Kernel) assessWaiting() {
 }
 
 func (k *Kernel) memoryCheck() bool {
-	if cap(k.Mem.PhysicalMemory) - len(k.Mem.PhysicalMemory) > k.MinimumFreeFrames {
+	if cap(k.Mem.PhysicalMemory)-len(k.Mem.PhysicalMemory) > k.MinimumFreeFrames {
 		return true
 	}
 
@@ -120,37 +127,41 @@ func (k *Kernel) memoryCheck() bool {
 
 func (k *Kernel) recvProc() {
 
-	// Check for new processes to schedule
-	select {
-	case x, ok := <-k.InMsg:
-		if ok {
+	for {
 
-			if k.memoryCheck() {
+		// Check for new processes to schedule
+		select {
+		case x, ok := <-k.InMsg:
+			if ok {
 
-				// If memory available then set to READY
-				x.state = READY
+				if k.memoryCheck() {
 
-				// New process ready to be executed
-				k.ReadyQ = append(k.ReadyQ, x)
+					// If memory available then set to READY
+					x.state = READY
+
+					// New process ready to be executed
+					k.ReadyQ = append(k.ReadyQ, x)
+
+				} else {
+					// If memory not available then set to WAIT
+					x.state = WAIT
+
+					// New process waiting for memory
+					k.WaitingQ = append(k.WaitingQ, x)
+
+				}
+
+				x.pages = k.Mem.Add(x.memory, x.PID)
 
 			} else {
-				// If memory not available then set to WAIT
-				x.state = WAIT
-
-				// New process waiting for memory
-				k.WaitingQ = append(k.WaitingQ, x)
-
+				// Channel is closed to execution must exit
+				return
 			}
-
-			x.pages = k.Mem.Add(x.memory, x.PID)
-
-		} else {
-			// Channel is closed to execution must exit
-			return
+		default:
+			// No new processes
+			break
 		}
-	default:
-		// No new processes
-		break
+
 	}
 }
 
@@ -198,7 +209,7 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process
 
 	// Randomize order of isntructions
 	// utils.ShuffleInstructions(instructions)
-	
+
 	for i := 0; i < numOfProcesses; i++ {
 		go CreateRandomProcessFromTemplate(procName, procMemory, instructions, processChan)
 	}

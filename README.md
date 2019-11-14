@@ -100,8 +100,3 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 - Yaml config file
     - Field for CPU, Memory, etc. etc
 - REPL package
-- Add interprocess opcodes
-    - SEND: send signal
-    - RECV: send signal
-- Make process ingestion faster
-  - Add as seperate goroutine
