@@ -80,7 +80,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 // }
 
 // Execute : execute instruction in process
-func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process) error {
+func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, mail []chan byte) error {
 
 
 	if len(p.ins) <= p.ip {
@@ -113,7 +113,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process) er
 		break
 	case code.FORK:
 
-		p.ip += 1
+		p.ip++
 
 		// create child process
 		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip)
@@ -126,20 +126,55 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process) er
 
 		break
 	case code.ENTER:
-		p.ip += 1
+		p.ip++
 
 		p.Critical = true
 		break
 	case code.EXIT:
-		p.ip += 1
+		p.ip++
 
 		p.Critical = false
 		break
+	case code.SEND:
+		p.ip += 2
+
+		mailbox := code.ReadUint8(p.ins[p.ip+1:])
+
+		if mailbox < 0 || mailbox > 10 {
+			break
+		}
+
+		select {
+		case mail[mailbox] <- byte(42): 
+
+		default:
+			break
+		}
+
+		break
+	case code.RECV:
+		p.ip += 2
+
+		mailbox := code.ReadUint8(p.ins[p.ip+1:])
+
+		if mailbox < 0 || mailbox > 10 {
+			break
+		}
+
+		select {
+		case value := <-mail[mailbox]:
+			if value != 42 {
+				return fmt.Errorf("[ERROR] error with RECV")
+			}
+		default:
+		}
+
+		break
 	case code.NOP:
-		p.ip += 1
+		p.ip++
 		break
 	default:
-		p.ip += 1
+		p.ip++
 		break
 	}
 

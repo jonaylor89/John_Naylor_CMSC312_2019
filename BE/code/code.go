@@ -30,6 +30,12 @@ const (
 	// EXIT : exit critical section
 	EXIT
 
+	// SEND : send packet to mailbox
+	SEND
+
+	// RECV : get packet from mailbox
+	RECV
+
 	// NOP : No operation
 	NOP 
 )
@@ -46,6 +52,8 @@ var definitions = map[Opcode]*Definition{
 	FORK:      {"FORK", []int{}},
 	ENTER: 	   {"ENTER", []int{}},
 	EXIT: 	   {"EXIT", []int{}},
+	SEND: 	   {"SEND", []int{1}},
+	RECV: 	   {"RECV", []int{1}},
 	NOP:	   {"NOP", []int{}},
 }
 
@@ -175,6 +183,12 @@ func Assemble(instructions [][]string) Instructions {
 			break
 		case "FORK":
 			op = Make(FORK, utils.StrToIntArray(ins[1:])...)
+			break
+		case "SEND":
+			op = Make(SEND, utils.StrToIntArray(ins[1:])...)
+			break
+		case "RECV":
+			op = Make(RECV, utils.StrToIntArray(ins[1:])...)
 			break
 		case "NOP":
 			op = Make(NOP, utils.StrToIntArray(ins[1:])...)

@@ -20,6 +20,7 @@ type Kernel struct {
 	ReadyQ   []*Process
 	WaitingQ []*Process
 	MinimumFreeFrames int
+	Mailboxes []chan byte
 	// DeviceQ  []*Process
 }
 
@@ -45,7 +46,7 @@ func (k *Kernel) RunRoundRobin() {
 
 
 				// Give the process access to the CPU and Process Channel
-				err := curProc.Execute(k.CPU, k.Mem, k.InMsg)
+				err := curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
 				if err != nil {
 
 					curProc.state = EXIT
@@ -81,7 +82,7 @@ func (k *Kernel) RunFirstComeFirstServe() {
 		// Execute process until it terminates
 		for {
 
-			curProc.Execute(k.CPU, k.Mem, k.InMsg)
+			curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
 
 			if curProc.runtime <= 0 {
 				curProc.state = EXIT

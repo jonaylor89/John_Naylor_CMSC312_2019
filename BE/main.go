@@ -40,6 +40,18 @@ func main() {
 		ReadyQ:   []*kernel.Process{},
 		WaitingQ: []*kernel.Process{},
 		MinimumFreeFrames: 8,
+		Mailboxes: []chan byte {
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+		 },
 	}
 
 	// Run the scheduler
