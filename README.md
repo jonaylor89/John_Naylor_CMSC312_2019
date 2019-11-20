@@ -99,3 +99,6 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 ### Personal TODO
 - REPL package
 - Comment everything
+- Child needs reference to parent
+- critacal for multisection
+- 
