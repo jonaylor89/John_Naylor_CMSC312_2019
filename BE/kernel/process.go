@@ -35,6 +35,9 @@ var (
 
 	// ProcNum : PID for the highest process
 	ProcNum int = 0
+
+	// MailboxAssignment : assigned mailbox
+	mailboxAssignment int = 0
 )
 
 // Process : Running set of code
@@ -47,16 +50,19 @@ type Process struct {
 	runtime  int    // Runtime Requirement
 	memory   int    // Memory Requirement
 	children []int  // List of PID to child processes
+	parent 	*Process // Parent process
 	ip		 int    // Instruction pointer
 	ins 	 code.Instructions 
 	pages 	 []int  // memory pages owned by process
 	Critical bool   // is the process in the critical section
+	assignedMailbox int // mail affinity
 }
 
 // CreateProcess : create a new process correctly
-func CreateProcess(name string, runtime int, mem int, ins code.Instructions, insPointer int) *Process {
+func CreateProcess(name string, runtime int, mem int, ins code.Instructions, insPointer int, parent *Process) *Process {
 
 	ProcNum++
+	MailboxAssignment = (MailboxAssignment + 1) % 10
 
 	return &Process{
 		PID:      ProcNum,
@@ -65,10 +71,12 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		runtime:  runtime,
 		memory:   mem,
 		children: []int{},
+		parent: parent
 		ip: 	  insPointer,
 		ins: 	  ins,
 		pages: 	  []int{},
 		Critical: false,
+		assignedMailbox: mailboxAssignment
 	}
 }
 
@@ -116,7 +124,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		p.ip++
 
 		// create child process
-		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip)
+		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip, p)
 
 		// Add child process to list of children of parent
 		p.children = append(p.children, child.PID)
@@ -136,16 +144,10 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		p.Critical = false
 		break
 	case code.SEND:
-		p.ip += 2
-
-		mailbox := code.ReadUint8(p.ins[p.ip+1:])
-
-		if mailbox < 0 || mailbox > 10 {
-			break
-		}
+		p.ip += 1
 
 		select {
-		case mail[mailbox] <- byte(42): 
+		case mail[p.assignedMailbox] <- byte(42): 
 
 		default:
 			break
@@ -153,16 +155,10 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 
 		break
 	case code.RECV:
-		p.ip += 2
-
-		mailbox := code.ReadUint8(p.ins[p.ip+1:])
-
-		if mailbox < 0 || mailbox > 10 {
-			break
-		}
+		p.ip += 1
 
 		select {
-		case value := <-mail[mailbox]:
+		case value := <-mail[p.assignedMailbox]:
 			if value != 42 {
 				return fmt.Errorf("[ERROR] error with RECV")
 			}

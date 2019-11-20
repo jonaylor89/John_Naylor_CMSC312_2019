@@ -23,10 +23,15 @@ func main() {
 	ch := make(chan *kernel.Process, conf.ProcChanSize)
 	defer close(ch)
 
-	cpu := &cpu.CPU{ 
+	cpu1 := &cpu.CPU{ 
 		TotalCycles: 0, 
-		Speed: conf.CPU.ClockSpeed,
+		Speed: conf.CPU.ClockSpeed1,
 	}
+
+	// cpu2 := &cpu.CPU{ 
+	// 	TotalCycles: 0, 
+	// 	Speed: conf.CPU.ClockSpeed2,
+	// }
 
 	mem := &memory.Memory{
 		PageSize: conf.Memory.PageSize,
@@ -37,7 +42,7 @@ func main() {
 	}
 
 	k := &kernel.Kernel{
-		CPU: 	  cpu,
+		CPU: 	  cpu1,
 		Mem: 	  mem,
 		InMsg:    ch,
 		ReadyQ:   []*kernel.Process{},

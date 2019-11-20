@@ -34,7 +34,8 @@ type Sched struct {
 
 // CPU : CPU configuration
 type CPU struct {
-	ClockSpeed time.Duration `yaml:"ClockSpeed"`
+	ClockSpeed1 time.Duration `yaml:"ClockSpeed1"`
+	ClockSpeed2 time.Duration `yaml:"ClockSpeed2"`
 }
 
 // Memory : Memory configuration

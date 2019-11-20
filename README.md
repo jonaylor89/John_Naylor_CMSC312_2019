@@ -96,9 +96,11 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 
 ---------------------------
 
-### Personal TODO
-- REPL package
+### TODO
 - Comment everything
-- Child needs reference to parent
-- critacal for multisection
-- 
+- Critical section for multithreading
+- Memory caching
+- Parent + child
+    - pipes
+- Two CPUs and Schedulers
+- return when IO from process.execute to kernel
