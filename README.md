@@ -8,13 +8,12 @@ will live in the repository.
 
 without docker
 ```sh
-~$ cd BE
 ~$ go build -o OS
 ```
 
 with docker
 ```
-~$ docker build -t jonaylor/operatingsystem:os ./BE
+~$ docker build -t jonaylor/operatingsystem:os .
 ```
 
 # Execution
@@ -99,7 +98,7 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 ### Part three
 
 - [x] Multithreading
-- [_] GUI
+- [_] GUI (or TUI)
 
 ------------------------
 
