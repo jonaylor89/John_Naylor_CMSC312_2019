@@ -79,11 +79,11 @@ func Render(k *kernel.Kernel) {
 	p3.PlotType = widgets.ScatterPlot
 
 	p := widgets.NewParagraph()
-	p.Text = "Hello World!"
+	p.Text = "CMSC312 Operating System Simulator"
 	p.SetRect(0, 0, 25, 5)
 
 	l := widgets.NewList()
-	l.Title = "List"
+	l.Title = "Ready Processes"
 	l.Rows = Map(k.ReadyQ, func(p *kernel.Process) string {
 		return fmt.Sprintf("%#v", p)
 	})
@@ -91,14 +91,24 @@ func Render(k *kernel.Kernel) {
 	l.WrapText = false
 	l.SetRect(0, 0, 25, 8)
 
+	l0 := widgets.NewList()
+	l0.Title = "Waiting Processes"
+	l0.Rows = Map(k.WaitingQ, func(p *kernel.Process) string {
+		return fmt.Sprintf("%#v", p)
+	})
+	l0.TextStyle = ui.NewStyle(ui.ColorYellow)
+	l0.WrapText = false
+	l0.SetRect(0, 0, 25, 8)
+
 	grid := ui.NewGrid()
 
 	grid.Set(
 		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/3, l),
+			ui.NewCol(1.0/1, p),
 		),
 		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/2, p),
+			ui.NewCol(1.0/2, l),
+			ui.NewCol(1.0/2, l0),
 		),
 		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/4, p0),
