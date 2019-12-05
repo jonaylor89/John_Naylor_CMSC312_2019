@@ -71,7 +71,7 @@ func ReadConfig(file string) Config {
 		log.Fatal("[ERROR] Time Quantum must be above zero")
 	}
 
-	if conf.CPU.ClockSpeed <= 0 {
+	if conf.CPU.ClockSpeed1 <= 0 {
 		log.Fatal("[ERROR] ClockSpeed must be above zero")
 	}
 

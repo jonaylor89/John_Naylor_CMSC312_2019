@@ -7,9 +7,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/utils"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
 // Kernel : manager for resources and controller to schedule process to run

@@ -1,17 +1,21 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"strconv"
-	"strings"
+	// "bufio"
+	// "fmt"
+	"log"
+	// "os"
+	// "strconv"
+	// "strings"
 	// "time"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/kernel"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/config"
+	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
+
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
 )
 
 func main() {

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/code"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/memory"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/BE/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/code"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
 )
 
 const (
@@ -62,7 +62,7 @@ type Process struct {
 func CreateProcess(name string, runtime int, mem int, ins code.Instructions, insPointer int, parent *Process) *Process {
 
 	ProcNum++
-	MailboxAssignment = (MailboxAssignment + 1) % 10
+	mailboxAssignment = (mailboxAssignment + 1) % 10
 
 	return &Process{
 		PID:      ProcNum,
@@ -71,12 +71,12 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		runtime:  runtime,
 		memory:   mem,
 		children: []int{},
-		parent: parent
+		parent: parent,
 		ip: 	  insPointer,
 		ins: 	  ins,
 		pages: 	  []int{},
 		Critical: false,
-		assignedMailbox: mailboxAssignment
+		assignedMailbox: mailboxAssignment,
 	}
 }
 
@@ -209,7 +209,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 
 	program := code.Assemble(instructions)
 	
-	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0)
+	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0, nil)
 	ch <- p
 }
 
