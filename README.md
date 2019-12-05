@@ -96,6 +96,13 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 
 ---------------------------
 
+### Part three
+
+- [x] Multithreading
+- [_] GUI
+
+------------------------
+
 ### TODO
 - Comment everything
 - Critical section for multithreading
