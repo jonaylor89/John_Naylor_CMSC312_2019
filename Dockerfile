@@ -17,6 +17,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/OS .
+COPY --from=builder /app/config.yml .
 
 COPY ProgramFiles/ ./ProgramFiles
 
