@@ -81,7 +81,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 }
 
 // String : string reporesentation of process
-// func (p Process) String() string {
+// func (p *Process) String() string {
 // 	return fmt.Sprintf("Name: %s ;Instructions: %s", 
 // 					p.Name,
 // 					p.ins)

@@ -10,12 +10,12 @@ import (
 	// "time"
 
 	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/tui"
 )
 
 func main() {
@@ -70,23 +70,13 @@ func main() {
 	go k.RunRoundRobin()
 	// go k.RunFirstComeFirst
 
-	// TUI
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
-	p := widgets.NewParagraph()
-	p.Text = "Hello World!"
-	p.SetRect(0, 0, 25, 5)
-
-	ui.Render(p)
-
-	for e := range ui.PollEvents() {
-		if e.Type == ui.KeyboardEvent {
-			break
-		}
-	}
+	tui.Render(k)
+	tui.EventLoop()
 	
 	// console := bufio.NewReader(os.Stdin)
 	// fmt.Println("OS Shell")
