@@ -5,6 +5,10 @@ import (
 	// "log"
 	"math"
 	"fmt"
+	"time"
+	"os"
+	"os/signal"
+	"syscall"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -21,6 +25,8 @@ var (
 	l  *widgets.List
 	l0  *widgets.List
 	grid *ui.Grid
+	
+	updateInterval = time.Second
 )
 
 func initWidgets() {
@@ -136,9 +142,27 @@ func Render(k *kernel.Kernel) {
 }
 
 func EventLoop() {
-	for e := range ui.PollEvents() {
-		if e.Type == ui.KeyboardEvent {
-			break
+	drawTicker := time.NewTicker(updateInterval).C
+
+	// handles kill signal sent to gotop
+	sigTerm := make(chan os.Signal, 2)
+	signal.Notify(sigTerm, os.Interrupt, syscall.SIGTERM)
+
+	uiEvents := ui.PollEvents()
+
+	// previousKey := ""
+
+	for {
+		select {
+		case <-sigTerm:
+			return
+		case <-drawTicker:
+			ui.Render(grid)
+		case e := <-uiEvents:
+			switch e.ID {
+			case "q", "<C-c>":
+				return
+			}
 		}
 	}
 }
