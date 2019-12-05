@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	
 )
 
 // ShuffleInstructions : randomize the order of instructions

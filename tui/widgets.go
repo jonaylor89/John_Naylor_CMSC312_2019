@@ -96,7 +96,7 @@ func Render(k *kernel.Kernel) {
 	p3.PlotType = widgets.ScatterPlot
 
 	p = widgets.NewParagraph()
-	p.Text = "CMSC312 Operating System Simulator"
+	p.Text = "CMSC312 Operating System Simulator (press `q` to quit)"
 	p.SetRect(0, 0, 25, 5)
 
 	l = widgets.NewList()
