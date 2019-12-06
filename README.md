@@ -43,13 +43,7 @@ The available commands for the shell are:
     - Load in template file and create processes from it
     - e.g. load ProgramFiles/temp1.txt 1000
         - load template 1 and create 1000 processes
-- proc
-    - Lists number of processes in scheduler queue
-- mem
-    - Displays memory
-- dump
-    - Dumps all processes with info
-- exit
+- exit || quit
     - Exits simulator
 
 # Testing
@@ -99,7 +93,6 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 
 - [x] Multithreading
 - [_] GUI (or TUI)
-    - Metrics
 
 ------------------------
 

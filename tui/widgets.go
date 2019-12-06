@@ -139,7 +139,6 @@ func Launch(args []string, ch chan *kernel.Process) bool {
 		}
 
 		filename := args[1]
-
 		numOfProc, err := strconv.Atoi(args[2])
 		if err != nil {
 			// fmt.Println("Could not get number of processes")
@@ -156,7 +155,7 @@ func Launch(args []string, ch chan *kernel.Process) bool {
 			break
 		}
 
-	case "exit", "quit", "q":
+	case "exit", "quit", "q", ":qw":
 		return true
 
 	default:
