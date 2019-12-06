@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"strings"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -21,9 +22,20 @@ var (
 	p  *widgets.Paragraph
 	l  *widgets.List
 	l0  *widgets.List
+	i *TextBox
 	grid *ui.Grid
 	
-	updateInterval = time.Second
+	updateInterval = time.Second / 10
+
+	PRINTABLE_KEYS = append(
+		strings.Split(
+			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,./<>?;:'\"[]\\{}|`~!@#$%^&*()-_=+",
+			"",
+		),
+		"<Space>",
+		"<Tab>",
+		"<Enter>",
+	)
 )
 
 func InitWidgets(k *kernel.Kernel) {
@@ -69,6 +81,11 @@ func InitWidgets(k *kernel.Kernel) {
 	l0.WrapText = false
 	l0.SetRect(0, 0, 25, 8)
 
+	i = NewTextBox()
+	i.SetText("Edit me!")
+	i.SetRect(25, 25, 50, 40)
+	i.ShowCursor = true
+
 }
 
 func Map(vs []*kernel.Process, f func(*kernel.Process) string) []string {
@@ -84,15 +101,18 @@ func Render() {
 	grid = ui.NewGrid()
 
 	grid.Set(
-		ui.NewRow(1.0/3,
+		ui.NewRow(1.0/4,
 			ui.NewCol(1.0/1, p),
 		),
-		ui.NewRow(1.0/3,
+		ui.NewRow(1.0/4,
 			ui.NewCol(1.0/2, l),
 			ui.NewCol(1.0/2, l0),
 		),
-		ui.NewRow(1.0/3,
+		ui.NewRow(1.0/4,
 			ui.NewCol(1.0/1, p0),
+		),
+		ui.NewRow(1.0/10,
+			ui.NewCol(1.0/1, i),
 		),
 	)
 
@@ -127,6 +147,27 @@ func EventLoop() {
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height)
 				ui.Clear()
+
+			case "<Left>":
+				i.MoveCursorLeft()
+			case "<Right>":
+				i.MoveCursorRight()
+			case "<Up>":
+				i.MoveCursorUp()
+			case "<Down>":
+				i.MoveCursorDown()
+			case "<Backspace>":
+				i.Backspace()
+			case "<Enter>":
+				i.InsertText("\n")
+			case "<Tab>":
+				i.InsertText("\t")
+			case "<Space>":
+				i.InsertText(" ")
+			default:
+				if ContainsString(PRINTABLE_KEYS, e.ID) {
+					i.InsertText(e.ID)
+				}
 			}
 		}
 	}
