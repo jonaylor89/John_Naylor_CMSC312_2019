@@ -155,7 +155,7 @@ func Launch(args []string, ch chan *kernel.Process) bool {
 			break
 		}
 
-	case "exit", "quit", "q", ":qw":
+	case "exit", "quit", "q", ":wq":
 		return true
 
 	default:
