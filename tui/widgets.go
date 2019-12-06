@@ -10,11 +10,16 @@ import (
 	"os/signal"
 	"syscall"
 	"strings"
+	"strconv"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
+)
+
+const (
+	PROMPT = "[os_simulator]$ "
 )
 
 var (
@@ -82,7 +87,7 @@ func InitWidgets(k *kernel.Kernel) {
 	l0.SetRect(0, 0, 25, 8)
 
 	i = NewTextBox()
-	i.SetText("[os_simulator]$ ")
+	i.SetText(PROMPT)
 	i.SetRect(25, 25, 50, 40)
 	i.Border = false
 	i.ShowCursor = true
@@ -102,14 +107,14 @@ func Render() {
 	grid = ui.NewGrid()
 
 	grid.Set(
-		ui.NewRow(1.0/4,
+		ui.NewRow(1.0/10,
 			ui.NewCol(1.0/1, p),
 		),
-		ui.NewRow(1.0/4,
+		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/2, l),
 			ui.NewCol(1.0/2, l0),
 		),
-		ui.NewRow(1.0/4,
+		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/1, p0),
 		),
 		ui.NewRow(1.0/10,
@@ -123,7 +128,45 @@ func Render() {
 	ui.Render(grid)
 }
 
-func EventLoop() {
+func Launch(args []string, ch chan *kernel.Process) bool {
+
+	switch args[0] {
+
+	case "load":
+		if len(args) != 3 {
+			// fmt.Println("`load` requires a filename and number of processes as an argument")
+			break
+		}
+
+		filename := args[1]
+
+		numOfProc, err := strconv.Atoi(args[2])
+		if err != nil {
+			// fmt.Println("Could not get number of processes")
+			break
+		}
+
+		if numOfProc <= 0 {
+			// fmt.Println("`load` number of processes must be postive")
+			break
+		}
+
+		err = kernel.LoadTemplate(filename, numOfProc, ch)
+		if err != nil {
+			break
+		}
+
+	case "exit", "quit", "q":
+		return true
+
+	default:
+		break
+	}
+
+	return false
+}
+
+func EventLoop(ch chan *kernel.Process) {
 	drawTicker := time.NewTicker(updateInterval).C
 
 	// handles kill signal sent to go
@@ -142,7 +185,7 @@ func EventLoop() {
 			ui.Render(grid)
 		case e := <-uiEvents:
 			switch e.ID {
-			case "q", "<C-c>":
+			case "<C-c>":
 				return
 			case "<Resize>":
 				payload := e.Payload.(ui.Resize)
@@ -160,8 +203,16 @@ func EventLoop() {
 			case "<Backspace>":
 				i.Backspace()
 			case "<Enter>":
-				i.InsertText("\n")
 				// Execute command that's set
+
+				args := strings.Split(i.GetText(), " ")[1:]
+
+				if quit := Launch(args, ch); quit {
+					return
+				}
+
+				i.ClearText()
+				i.SetText(PROMPT)
 			case "<Tab>":
 				i.InsertText("\t")
 			case "<Space>":

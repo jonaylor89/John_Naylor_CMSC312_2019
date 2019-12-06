@@ -99,6 +99,8 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 
 - [x] Multithreading
 - [_] GUI (or TUI)
+    - Metrics
+    - Prompt
 
 ------------------------
 
