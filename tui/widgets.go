@@ -82,8 +82,9 @@ func InitWidgets(k *kernel.Kernel) {
 	l0.SetRect(0, 0, 25, 8)
 
 	i = NewTextBox()
-	i.SetText("Edit me!")
+	i.SetText("[os_simulator]$ ")
 	i.SetRect(25, 25, 50, 40)
+	i.Border = false
 	i.ShowCursor = true
 
 }
@@ -160,6 +161,7 @@ func EventLoop() {
 				i.Backspace()
 			case "<Enter>":
 				i.InsertText("\n")
+				// Execute command that's set
 			case "<Tab>":
 				i.InsertText("\t")
 			case "<Space>":

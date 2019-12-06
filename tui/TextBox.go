@@ -96,7 +96,7 @@ func (self *TextBox) Draw(buf *Buffer) {
 }
 
 func (self *TextBox) Backspace() {
-	if self.cursorPoint == image.Pt(1, 1) {
+	if self.cursorPoint == image.Pt(17, 1) {
 		return
 	}
 	if self.cursorPoint.X == 1 {
