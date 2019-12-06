@@ -26,21 +26,7 @@ var (
 	updateInterval = time.Second
 )
 
-func initWidgets() {
-	
-}
-
-func Map(vs []*kernel.Process, f func(*kernel.Process) string) []string {
-    vsm := make([]string, len(vs))
-    for i, v := range vs {
-        vsm[i] = f(v)
-    }
-    return vsm
-}
-
-func Render(k *kernel.Kernel) {
-	// TUI
-
+func InitWidgets(k *kernel.Kernel) {
 	sinData := func() [][]float64 {
 		n := 220
 		data := make([][]float64, 2)
@@ -83,6 +69,18 @@ func Render(k *kernel.Kernel) {
 	l0.WrapText = false
 	l0.SetRect(0, 0, 25, 8)
 
+}
+
+func Map(vs []*kernel.Process, f func(*kernel.Process) string) []string {
+    vsm := make([]string, len(vs))
+    for i, v := range vs {
+        vsm[i] = f(v)
+    }
+    return vsm
+}
+
+func Render() {
+	// TUI
 	grid = ui.NewGrid()
 
 	grid.Set(
@@ -107,7 +105,7 @@ func Render(k *kernel.Kernel) {
 func EventLoop() {
 	drawTicker := time.NewTicker(updateInterval).C
 
-	// handles kill signal sent to gotop
+	// handles kill signal sent to go
 	sigTerm := make(chan os.Signal, 2)
 	signal.Notify(sigTerm, os.Interrupt, syscall.SIGTERM)
 

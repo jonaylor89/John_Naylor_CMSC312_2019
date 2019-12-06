@@ -75,7 +75,8 @@ func main() {
 	}
 	defer ui.Close()
 
-	tui.Render(k)
+	tui.InitWidgets(k)
+	tui.Render()
 	tui.EventLoop()
 	
 	// console := bufio.NewReader(os.Stdin)
