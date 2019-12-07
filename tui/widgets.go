@@ -107,7 +107,7 @@ func Render() {
 	grid = ui.NewGrid()
 
 	grid.Set(
-		ui.NewRow(1.0/10,
+		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/1, p),
 		),
 		ui.NewRow(1.0/3,
@@ -117,13 +117,11 @@ func Render() {
 		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/1, p0),
 		),
-		ui.NewRow(1.0/10,
-			ui.NewCol(1.0/1, i),
-		),
 	)
 
 	termWidth, termHeight := ui.TerminalDimensions()
-	grid.SetRect(0, 0, termWidth, termHeight)
+	grid.SetRect(0, 0, termWidth, termHeight-1)
+	i.SetRect(0, termHeight-1, termWidth, termHeight)
 
 	ui.Render(grid)
 }
@@ -182,13 +180,15 @@ func EventLoop(ch chan *kernel.Process) {
 			return
 		case <-drawTicker:
 			ui.Render(grid)
+			ui.Render(i)
 		case e := <-uiEvents:
 			switch e.ID {
 			case "<C-c>":
 				return
 			case "<Resize>":
 				payload := e.Payload.(ui.Resize)
-				grid.SetRect(0, 0, payload.Width, payload.Height)
+				grid.SetRect(0, 0, payload.Width, payload.Height-1)
+				i.SetRect(0, payload.Height-1, payload.Width, payload.Height)
 				ui.Clear()
 
 			case "<Left>":
