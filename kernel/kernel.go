@@ -20,7 +20,7 @@ type Kernel struct {
 	ReadyQ            []*Process
 	WaitingQ          []*Process
 	MinimumFreeFrames int
-	TimeQuantum int
+	TimeQuantum       int
 	Mailboxes         []chan byte
 	// DeviceQ  []*Process
 }

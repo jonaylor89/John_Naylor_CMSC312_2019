@@ -28,7 +28,7 @@ type Memory struct {
 
 // Page : a page of memory
 type Page struct {
-	PageID	 int // ID of page
+	PageID   int // ID of page
 	ProcID   int // Process ID of the process using this page
 	contents []byte
 }
@@ -68,17 +68,17 @@ func (m *Memory) Add(requirement int, pid int) []int {
 
 	for i := 0; i < numOfPages; i++ {
 
-		pageNum++ 
+		pageNum++
 
 		p := &Page{
-			PageID: pageNum,
-			ProcID: pid,
+			PageID:   pageNum,
+			ProcID:   pid,
 			contents: make([]byte, 0, 30),
 		}
 
 		pageIds = append(pageIds, pageNum)
 
-		m.VirtualMemory = append(m.VirtualMemory, p)	
+		m.VirtualMemory = append(m.VirtualMemory, p)
 	}
 
 	return pageIds
@@ -89,8 +89,8 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 	// Remove page from virtual memory
 	m.VirtualMemory = remove(m.VirtualMemory, indexInVm)
 
-	// if there is an empty space, put page in empty space	
-	if cap(m.PhysicalMemory) - len(m.PhysicalMemory) > 0 {
+	// if there is an empty space, put page in empty space
+	if cap(m.PhysicalMemory)-len(m.PhysicalMemory) > 0 {
 		m.PhysicalMemory = append(m.PhysicalMemory, p)
 
 		// Always add new entry to page table and remove old entry if replaced
@@ -100,7 +100,7 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 	// if there isn't an empty space, run a replace procedure
 
 	// Find victim page
-	i, victimPage := m.findVictim(p.ProcID)	
+	i, victimPage := m.findVictim(p.ProcID)
 	if i == -1 {
 		return
 	}
@@ -119,7 +119,6 @@ func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 // findVictim : find a process to replace the current one with
 func (m *Memory) findVictim(procID int) (int, *Page) {
 
-
 	// Literally just find the first page with the same process ID lol
 	for _, v := range m.PageTable {
 		if m.PhysicalMemory[v].ProcID == procID {
@@ -127,14 +126,14 @@ func (m *Memory) findVictim(procID int) (int, *Page) {
 		}
 	}
 
-	return -1, nil	
+	return -1, nil
 }
 
 // RemovePages : remove all pages associated with a pid
 func (m *Memory) RemovePages(pid int) {
 
 	// Remove pages from physical memory
-	for i := len(m.PhysicalMemory)-1; i >= 0; i-- {
+	for i := len(m.PhysicalMemory) - 1; i >= 0; i-- {
 		page := m.PhysicalMemory[i]
 		if page.ProcID == pid {
 			m.PhysicalMemory = remove(m.PhysicalMemory, i)
@@ -142,10 +141,10 @@ func (m *Memory) RemovePages(pid int) {
 			// Update page table
 			delete(m.PageTable, page.PageID)
 		}
-	}	
+	}
 
 	// Remove pages from virtual memory
-	for i := len(m.VirtualMemory)-1; i >= 0; i-- {
+	for i := len(m.VirtualMemory) - 1; i >= 0; i-- {
 		page := m.VirtualMemory[i]
 		if page.ProcID == pid {
 

@@ -1,4 +1,3 @@
-
 package memory
 
 // Mutex : Mutex lock
@@ -10,7 +9,7 @@ type Mutex struct {
 func (m *Mutex) Acquire() bool {
 	if m.locked {
 		return false
-	} 
+	}
 
 	m.locked = true
 	return true

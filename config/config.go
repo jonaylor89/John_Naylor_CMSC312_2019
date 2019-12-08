@@ -20,11 +20,11 @@ import (
 // Note: struct fields must be public in order for unmarshal to
 // correctly populate the data.
 type Config struct {
-	ProcChanSize      int `yaml:"ProcChanSize"`
-	MinimumFreeFrames int `yaml:"MinimumFreeFrames"`
-	Sched *Sched `yaml:"Sched"`
-	CPU *CPU `yaml:"CPU"`
-	Memory *Memory `yaml:"Memory"`
+	ProcChanSize      int     `yaml:"ProcChanSize"`
+	MinimumFreeFrames int     `yaml:"MinimumFreeFrames"`
+	Sched             *Sched  `yaml:"Sched"`
+	CPU               *CPU    `yaml:"CPU"`
+	Memory            *Memory `yaml:"Memory"`
 }
 
 // Sched : Scheduler configurations

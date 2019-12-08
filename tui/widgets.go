@@ -1,16 +1,14 @@
-
 package tui
 
 import (
 	// "log"
 	// "fmt"
-	"math"
-	"time"
 	"os"
 	"os/signal"
-	"syscall"
-	"strings"
 	"strconv"
+	"strings"
+	"syscall"
+	"time"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -23,13 +21,13 @@ const (
 )
 
 var (
-	p0 *widgets.Plot
-	p  *widgets.Paragraph
-	readys *ProcWidget
+	p        *widgets.Paragraph
+	readys   *ProcWidget
 	waitings *ProcWidget
-	i *TextBox
-	grid *ui.Grid
-	
+	mems     *MemWidget
+	i        *TextBox
+	grid     *ui.Grid
+
 	updateInterval = time.Second / 10
 
 	PRINTABLE_KEYS = append(
@@ -44,25 +42,8 @@ var (
 )
 
 func InitWidgets(k *kernel.Kernel) {
-	sinData := func() [][]float64 {
-		n := 220
-		data := make([][]float64, 2)
-		data[0] = make([]float64, n)
-		data[1] = make([]float64, n)
-		for i := 0; i < n; i++ {
-			data[0][i] = 1 + math.Sin(float64(i)/5)
-			data[1][i] = 1 + math.Cos(float64(i)/5)
-		}
-		return data
-	}()
-
-	p0 = widgets.NewPlot()
-	p0.Title = " Memory Usage "
-	p0.Data = sinData
-	p0.SetRect(0, 0, 50, 15)
-	p0.AxesColor = ui.ColorWhite
-	p0.LineColors[0] = ui.ColorGreen
-	p0.LineColors[1] = ui.ColorBlue
+	mems = NewMemWidget(k.Mem)
+	mems.SetRect(0, 0, 25, 5)
 
 	p = widgets.NewParagraph()
 	p.Text = " CMSC312 Operating System Simulator "
@@ -89,11 +70,11 @@ func InitWidgets(k *kernel.Kernel) {
 }
 
 func Map(vs []*kernel.Process, f func(*kernel.Process) string) []string {
-    vsm := make([]string, len(vs))
-    for i, v := range vs {
-        vsm[i] = f(v)
-    }
-    return vsm
+	vsm := make([]string, len(vs))
+	for i, v := range vs {
+		vsm[i] = f(v)
+	}
+	return vsm
 }
 
 func Render() {
@@ -109,7 +90,7 @@ func Render() {
 			ui.NewCol(1.0/2, waitings),
 		),
 		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/1, p0),
+			ui.NewCol(1.0/1, mems),
 		),
 	)
 

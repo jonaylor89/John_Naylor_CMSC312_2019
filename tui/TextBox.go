@@ -22,24 +22,23 @@ const (
 	tokenEndStyle   = ')'
 )
 
-
 var (
 	textColorMap = map[Color]string{
-		ColorRed: "red",
-		ColorBlue: "blue",
-		ColorBlack: "black",
-		ColorCyan: "cyan",
-		ColorYellow: "yellow",
-		ColorWhite: "white",
-		ColorClear: "clear",
-		ColorGreen: "green",
+		ColorRed:     "red",
+		ColorBlue:    "blue",
+		ColorBlack:   "black",
+		ColorCyan:    "cyan",
+		ColorYellow:  "yellow",
+		ColorWhite:   "white",
+		ColorClear:   "clear",
+		ColorGreen:   "green",
 		ColorMagenta: "magenta",
 	}
 
 	textModifierMap = map[Modifier]string{
-		ModifierBold: "bold",
+		ModifierBold:      "bold",
 		ModifierUnderline: "underline",
-		ModifierReverse: "reverse",
+		ModifierReverse:   "reverse",
 	}
 )
 
@@ -209,7 +208,6 @@ func CellsToStyledString(cells []Cell, defaultStyle Style) string {
 	return sb.String()
 }
 
-
 func ContainsString(a []string, s string) bool {
 	for _, i := range a {
 		if i == s {
@@ -252,16 +250,16 @@ func writeStyledText(sb *strings.Builder, runes []rune, currentStyle Style, defa
 func StyleString(self Style) string {
 	styles := make([]string, 0)
 
-	if color, ok := textColorMap[self.Fg]; ok  && self.Fg !=  StyleClear.Fg {
-		styles = append(styles, tokenFg + tokenValueSeparator + color)
+	if color, ok := textColorMap[self.Fg]; ok && self.Fg != StyleClear.Fg {
+		styles = append(styles, tokenFg+tokenValueSeparator+color)
 	}
 
-	if color, ok := textColorMap[self.Bg]; ok && self.Bg !=  StyleClear.Bg {
-		styles = append(styles, tokenBg + tokenValueSeparator + color)
+	if color, ok := textColorMap[self.Bg]; ok && self.Bg != StyleClear.Bg {
+		styles = append(styles, tokenBg+tokenValueSeparator+color)
 	}
 
-	if mod, ok := textModifierMap[self.Modifier]; ok  && self.Modifier !=  StyleClear.Modifier {
-		styles = append(styles, tokenModifier + tokenValueSeparator + mod)
+	if mod, ok := textModifierMap[self.Modifier]; ok && self.Modifier != StyleClear.Modifier {
+		styles = append(styles, tokenModifier+tokenValueSeparator+mod)
 	}
 
 	return strings.Join(styles, tokenItemSeparator)

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/code"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
 )
 
 const (
@@ -44,18 +44,18 @@ var (
 type Process struct {
 	// Some info should be in a process contol block
 	// And there will be a list of all process control blocks
-	PID      int    // Process ID
-	Name     string // Process Name
-	State    int    // Process State
-	Runtime  int    // Runtime Requirement
-	Memory   int    // Memory Requirement
-	children []int  // List of PID to child processes
-	parent 	*Process // Parent process
-	ip		 int    // Instruction pointer
-	ins 	 code.Instructions 
-	pages 	 []int  // memory pages owned by process
-	Critical bool   // is the process in the critical section
-	assignedMailbox int // mail affinity
+	PID             int      // Process ID
+	Name            string   // Process Name
+	State           int      // Process State
+	Runtime         int      // Runtime Requirement
+	Memory          int      // Memory Requirement
+	children        []int    // List of PID to child processes
+	parent          *Process // Parent process
+	ip              int      // Instruction pointer
+	ins             code.Instructions
+	pages           []int // memory pages owned by process
+	Critical        bool  // is the process in the critical section
+	assignedMailbox int   // mail affinity
 }
 
 // CreateProcess : create a new process correctly
@@ -65,31 +65,30 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 	mailboxAssignment = (mailboxAssignment + 1) % 10
 
 	return &Process{
-		PID:      ProcNum,
-		Name:     name,
-		State:    NEW,
-		Runtime:  runtime,
-		Memory:   mem,
-		children: []int{},
-		parent: parent,
-		ip: 	  insPointer,
-		ins: 	  ins,
-		pages: 	  []int{},
-		Critical: false,
+		PID:             ProcNum,
+		Name:            name,
+		State:           NEW,
+		Runtime:         runtime,
+		Memory:          mem,
+		children:        []int{},
+		parent:          parent,
+		ip:              insPointer,
+		ins:             ins,
+		pages:           []int{},
+		Critical:        false,
 		assignedMailbox: mailboxAssignment,
 	}
 }
 
 // String : string reporesentation of process
 // func (p *Process) String() string {
-// 	return fmt.Sprintf("Name: %s ;Instructions: %s", 
+// 	return fmt.Sprintf("Name: %s ;Instructions: %s",
 // 					p.Name,
 // 					p.ins)
 // }
 
 // Execute : execute instruction in process
 func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, mail []chan byte) error {
-
 
 	if len(p.ins) <= p.ip {
 		return fmt.Errorf("End of instructions")
@@ -98,7 +97,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 	curIns := p.ins[p.ip]
 	op := code.Opcode(curIns)
 
-	switch (op) {
+	switch op {
 
 	case code.CALC:
 
@@ -147,7 +146,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		p.ip += 1
 
 		select {
-		case mail[p.assignedMailbox] <- byte(42): 
+		case mail[p.assignedMailbox] <- byte(42):
 
 		default:
 			break
@@ -208,9 +207,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 	}
 
 	program := code.Assemble(instructions)
-	
+
 	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0, nil)
 	ch <- p
 }
-
-

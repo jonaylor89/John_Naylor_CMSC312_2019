@@ -1,9 +1,9 @@
 package tui
 
 import (
+	"fmt"
 	"strconv"
 	"time"
-	"fmt"
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
@@ -12,27 +12,17 @@ import (
 
 type ProcWidget struct {
 	*widgets.Table
-	updateInterval   time.Duration
-	procs   *[]*kernel.Process
+	updateInterval time.Duration
+	procs          *[]*kernel.Process
 }
 
 func NewProcWidget(processes *[]*kernel.Process) *ProcWidget {
 	self := &ProcWidget{
-		Table:            widgets.NewTable(),
-		updateInterval:   time.Second,
-		procs: processes,
+		Table:          widgets.NewTable(),
+		updateInterval: time.Second,
+		procs:          processes,
 	}
-	// self.ShowCursor = true
-	// self.ShowLocation = true
-	// self.ColGap = 3
-	// self.PadLeft = 2
-	// self.ColResizer = func() {
-	// 	self.ColWidths = []int{
-	// 		5, utils.MaxInt(self.Inner.Dx()-26, 10), 4, 4,
-	// 	}
-	// }
 
-	// self.Header = []string{"PID", "Name", "CPU", "Mem"}
 	self.TextAlignment = ui.AlignCenter
 	self.RowSeparator = false
 

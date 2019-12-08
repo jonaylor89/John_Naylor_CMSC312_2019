@@ -1,4 +1,3 @@
-
 package utils
 
 import (
@@ -38,7 +37,6 @@ func ReadLine(reader *bufio.Reader) ([]string, error) {
 
 	return elements, nil
 }
-
 
 func StrToIntArray(strArray []string) []int {
 

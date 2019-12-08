@@ -11,10 +11,10 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/tui"
 )
 
@@ -26,33 +26,33 @@ func main() {
 	ch := make(chan *kernel.Process, conf.ProcChanSize)
 	defer close(ch)
 
-	cpu1 := &cpu.CPU{ 
-		TotalCycles: 0, 
-		Speed: conf.CPU.ClockSpeed1,
+	cpu1 := &cpu.CPU{
+		TotalCycles: 0,
+		Speed:       conf.CPU.ClockSpeed1,
 	}
 
-	// cpu2 := &cpu.CPU{ 
-	// 	TotalCycles: 0, 
+	// cpu2 := &cpu.CPU{
+	// 	TotalCycles: 0,
 	// 	Speed: conf.CPU.ClockSpeed2,
 	// }
 
 	mem := &memory.Memory{
-		PageSize: conf.Memory.PageSize,
-		TotalRam: conf.Memory.TotalRam,
-		PageTable: make(map[int]int),
-		VirtualMemory: make([]*memory.Page, 0),
-		PhysicalMemory: make([]*memory.Page, 0, conf.Memory.TotalRam / conf.Memory.PageSize),
+		PageSize:       conf.Memory.PageSize,
+		TotalRam:       conf.Memory.TotalRam,
+		PageTable:      make(map[int]int),
+		VirtualMemory:  make([]*memory.Page, 0),
+		PhysicalMemory: make([]*memory.Page, 0, conf.Memory.TotalRam/conf.Memory.PageSize),
 	}
 
 	k := &kernel.Kernel{
-		CPU: 	  cpu1,
-		Mem: 	  mem,
-		InMsg:    ch,
-		ReadyQ:   []*kernel.Process{},
-		WaitingQ: []*kernel.Process{},
+		CPU:               cpu1,
+		Mem:               mem,
+		InMsg:             ch,
+		ReadyQ:            []*kernel.Process{},
+		WaitingQ:          []*kernel.Process{},
 		MinimumFreeFrames: conf.MinimumFreeFrames,
-		TimeQuantum: conf.Sched.TimeQuantum,
-		Mailboxes: []chan byte {
+		TimeQuantum:       conf.Sched.TimeQuantum,
+		Mailboxes: []chan byte{
 			make(chan byte, 10),
 			make(chan byte, 10),
 			make(chan byte, 10),
@@ -63,7 +63,7 @@ func main() {
 			make(chan byte, 10),
 			make(chan byte, 10),
 			make(chan byte, 10),
-		 },
+		},
 	}
 
 	// Run the scheduler
@@ -78,5 +78,5 @@ func main() {
 	tui.InitWidgets(k)
 	tui.Render()
 	tui.EventLoop(ch)
-	
+
 }

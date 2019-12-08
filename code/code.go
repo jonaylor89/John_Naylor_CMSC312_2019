@@ -25,7 +25,7 @@ const (
 	FORK
 
 	// ENTER : enter critical section
-	ENTER 
+	ENTER
 
 	// EXIT : exit critical section
 	EXIT
@@ -37,7 +37,7 @@ const (
 	RECV
 
 	// NOP : No operation
-	NOP 
+	NOP
 )
 
 // Definition : definition of an instruction
@@ -47,14 +47,14 @@ type Definition struct {
 }
 
 var definitions = map[Opcode]*Definition{
-	CALC: 	   {"CALC", []int{1}},
-	IO:        {"IO", []int{1}},
-	FORK:      {"FORK", []int{}},
-	ENTER: 	   {"ENTER", []int{}},
-	EXIT: 	   {"EXIT", []int{}},
-	SEND: 	   {"SEND", []int{1}},
-	RECV: 	   {"RECV", []int{1}},
-	NOP:	   {"NOP", []int{}},
+	CALC:  {"CALC", []int{1}},
+	IO:    {"IO", []int{1}},
+	FORK:  {"FORK", []int{}},
+	ENTER: {"ENTER", []int{}},
+	EXIT:  {"EXIT", []int{}},
+	SEND:  {"SEND", []int{1}},
+	RECV:  {"RECV", []int{1}},
+	NOP:   {"NOP", []int{}},
 }
 
 // Lookup : associate a opcode with its definition
@@ -95,7 +95,6 @@ func (ins Instructions) String() string {
 			fmt.Fprintf(&out, "ERROR: %s\n", err)
 			continue
 		}
-		
 
 		operands, read := ReadOperands(def, ins[i+1:])
 
@@ -162,7 +161,7 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 }
 
 // Assemble : Assembly a 2 dimensions string array of opcode and operands into Instructions
-func Assemble(instructions [][]string) Instructions { 
+func Assemble(instructions [][]string) Instructions {
 
 	program := Instructions{}
 	var op []byte
