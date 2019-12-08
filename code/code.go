@@ -53,7 +53,7 @@ var definitions = map[Opcode]*Definition{
 	ENTER: {"ENTER", []int{}},
 	EXIT:  {"EXIT", []int{}},
 	SEND:  {"SEND", []int{1}},
-	RECV:  {"RECV", []int{1}},
+	RECV:  {"RECV", []int{}},
 	NOP:   {"NOP", []int{}},
 }
 
@@ -125,6 +125,9 @@ func Make(op Opcode, operands ...int) []byte {
 	offset := 1
 
 	for i, o := range operands {
+		if i >= len(def.OperandWidths) {
+			break
+		}
 		width := def.OperandWidths[i]
 
 		switch width {

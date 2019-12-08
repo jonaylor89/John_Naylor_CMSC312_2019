@@ -143,10 +143,13 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		p.Critical = false
 		break
 	case code.SEND:
-		p.ip += 1
+
+		data := p.ins[p.ip+1]
+
+		p.ip += 2
 
 		select {
-		case mail[p.assignedMailbox] <- byte(42):
+		case mail[p.assignedMailbox] <- byte(data):
 
 		default:
 			break
@@ -154,11 +157,11 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 
 		break
 	case code.RECV:
-		p.ip += 1
+		p.ip++
 
 		select {
 		case value := <-mail[p.assignedMailbox]:
-			if value != 42 {
+			if value < 0 {
 				return fmt.Errorf("[ERROR] error with RECV")
 			}
 		default:
