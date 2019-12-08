@@ -13,7 +13,7 @@ import (
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/tui"
 )
@@ -23,7 +23,7 @@ func main() {
 	conf := config.ReadConfig("config.yml")
 
 	// Message channel to kernel
-	ch := make(chan *kernel.Process, conf.ProcChanSize)
+	ch := make(chan *sched.Process, conf.ProcChanSize)
 	defer close(ch)
 
 	cpu1 := &cpu.CPU{
@@ -44,12 +44,12 @@ func main() {
 		PhysicalMemory: make([]*memory.Page, 0, conf.Memory.TotalRam/conf.Memory.PageSize),
 	}
 
-	k := &kernel.Kernel{
+	s := &sched.Scheduler{
 		CPU:               cpu1,
 		Mem:               mem,
 		InMsg:             ch,
-		ReadyQ:            []*kernel.Process{},
-		WaitingQ:          []*kernel.Process{},
+		ReadyQ:            []*sched.Process{},
+		WaitingQ:          []*sched.Process{},
 		MinimumFreeFrames: conf.MinimumFreeFrames,
 		TimeQuantum:       conf.Sched.TimeQuantum,
 		Mailboxes: []chan byte{
@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Run the scheduler
-	go k.RunRoundRobin()
+	go s.RunRoundRobin()
 	// go k.RunFirstComeFirst
 
 	if err := ui.Init(); err != nil {
@@ -75,7 +75,7 @@ func main() {
 	}
 	defer ui.Close()
 
-	tui.InitWidgets(k)
+	tui.InitWidgets(s)
 	tui.Render()
 	tui.EventLoop(ch)
 

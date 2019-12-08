@@ -1,4 +1,4 @@
-package kernel
+package sched
 
 import (
 	"bufio"
@@ -12,8 +12,8 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/utils"
 )
 
-// Kernel : manager for resources and controller to schedule process to run
-type Kernel struct {
+// Scheduler : manager for resources and controller to schedule process to run
+type Scheduler struct {
 	CPU               *cpu.CPU
 	Mem               *memory.Memory
 	InMsg             chan *Process
@@ -26,31 +26,31 @@ type Kernel struct {
 }
 
 // RunRoundRobin : Start the schedule and process execution
-func (k *Kernel) RunRoundRobin() {
+func (s *Scheduler) RunRoundRobin() {
 
 	// Check for new processes
-	go k.recvProc()
+	go s.recvProc()
 
 	for {
 
 		// Loop through processes backwards and execute them off a time quantum
-		for i := len(k.ReadyQ) - 1; i > 0; i-- {
-			curProc := k.ReadyQ[i]
+		for i := len(s.ReadyQ) - 1; i > 0; i-- {
+			curProc := s.ReadyQ[i]
 
 			curProc.State = RUN
 
-			timeNull := k.CPU.TotalCycles
+			timeNull := s.CPU.TotalCycles
 
 			// Only get so many CPU cycles
-			for k.CPU.TotalCycles-timeNull < k.TimeQuantum && !curProc.Critical {
+			for s.CPU.TotalCycles-timeNull < s.TimeQuantum && !curProc.Critical {
 
 				// Give the process access to the CPU and Process Channel
-				err := curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
+				err := curProc.Execute(s.CPU, s.Mem, s.InMsg, s.Mailboxes)
 				if err != nil {
 
 					curProc.State = EXIT
-					k.ReadyQ = remove(k.ReadyQ, i)
-					k.Mem.RemovePages(curProc.PID)
+					s.ReadyQ = remove(s.ReadyQ, i)
+					s.Mem.RemovePages(curProc.PID)
 					break
 				}
 
@@ -60,30 +60,30 @@ func (k *Kernel) RunRoundRobin() {
 		}
 
 		// Check if waiting processes can be moved to ready
-		k.assessWaiting()
+		s.assessWaiting()
 
 	}
 }
 
 // RunFirstComeFirstServe : First come first serve algorithm
-func (k *Kernel) RunFirstComeFirstServe() {
+func (s *Scheduler) RunFirstComeFirstServe() {
 
 	// Check for new processes
-	go k.recvProc()
+	go s.recvProc()
 
 	for {
 
-		if len(k.ReadyQ) > 0 {
+		if len(s.ReadyQ) > 0 {
 
 			var curProc *Process
-			curProc, k.ReadyQ = k.ReadyQ[0], k.ReadyQ[1:]
+			curProc, s.ReadyQ = s.ReadyQ[0], s.ReadyQ[1:]
 
 			curProc.State = RUN
 
 			// Execute process until it terminates
 			for {
 
-				curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
+				curProc.Execute(s.CPU, s.Mem, s.InMsg, s.Mailboxes)
 
 				if curProc.Runtime <= 0 {
 					curProc.State = EXIT
@@ -94,62 +94,62 @@ func (k *Kernel) RunFirstComeFirstServe() {
 		}
 
 		// Check if waiting processes can be moved to ready
-		k.assessWaiting()
+		s.assessWaiting()
 
 	}
 }
 
-func (k *Kernel) assessWaiting() {
-	for i := len(k.WaitingQ) - 1; i > 0; i-- {
-		proc := k.WaitingQ[i]
+func (s *Scheduler) assessWaiting() {
+	for i := len(s.WaitingQ) - 1; i > 0; i-- {
+		proc := s.WaitingQ[i]
 
-		if k.memoryCheck() {
-			k.WaitingQ = remove(k.WaitingQ, i)
+		if s.memoryCheck() {
+			s.WaitingQ = remove(s.WaitingQ, i)
 
 			proc.State = READY
 
-			k.ReadyQ = append(k.ReadyQ, proc)
+			s.ReadyQ = append(s.ReadyQ, proc)
 
-			k.Mem.Add(proc.Memory, proc.PID)
+			s.Mem.Add(proc.Memory, proc.PID)
 		}
 	}
 }
 
-func (k *Kernel) memoryCheck() bool {
-	if cap(k.Mem.PhysicalMemory)-len(k.Mem.PhysicalMemory) > k.MinimumFreeFrames {
+func (s *Scheduler) memoryCheck() bool {
+	if cap(s.Mem.PhysicalMemory)-len(s.Mem.PhysicalMemory) > s.MinimumFreeFrames {
 		return true
 	}
 
 	return false
 }
 
-func (k *Kernel) recvProc() {
+func (s *Scheduler) recvProc() {
 
 	for {
 
-		// Check for new processes to schedule
+		// Checs for new processes to schedule
 		select {
-		case x, ok := <-k.InMsg:
+		case x, ok := <-s.InMsg:
 			if ok {
 
-				if k.memoryCheck() {
+				if s.memoryCheck() {
 
 					// If memory available then set to READY
 					x.State = READY
 
 					// New process ready to be executed
-					k.ReadyQ = append(k.ReadyQ, x)
+					s.ReadyQ = append(s.ReadyQ, x)
 
 				} else {
 					// If memory not available then set to WAIT
 					x.State = WAIT
 
 					// New process waiting for memory
-					k.WaitingQ = append(k.WaitingQ, x)
+					s.WaitingQ = append(s.WaitingQ, x)
 
 				}
 
-				x.pages = k.Mem.Add(x.Memory, x.PID)
+				x.pages = s.Mem.Add(x.Memory, x.PID)
 
 			} else {
 				// Channel is closed to execution must exit

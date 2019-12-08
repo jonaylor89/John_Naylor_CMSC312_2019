@@ -7,16 +7,16 @@ import (
 
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )
 
 type ProcWidget struct {
 	*widgets.Table
 	updateInterval time.Duration
-	procs          *[]*kernel.Process
+	procs          *[]*sched.Process
 }
 
-func NewProcWidget(processes *[]*kernel.Process) *ProcWidget {
+func NewProcWidget(processes *[]*sched.Process) *ProcWidget {
 	self := &ProcWidget{
 		Table:          widgets.NewTable(),
 		updateInterval: time.Second,

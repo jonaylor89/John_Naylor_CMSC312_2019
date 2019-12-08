@@ -13,7 +13,7 @@ import (
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/kernel"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 )
 
 const (
@@ -41,21 +41,21 @@ var (
 	)
 )
 
-func InitWidgets(k *kernel.Kernel) {
-	mems = NewMemWidget(k.Mem)
+func InitWidgets(s *sched.Scheduler) {
+	mems = NewMemWidget(s.Mem)
 	mems.SetRect(0, 0, 25, 5)
 
 	p = widgets.NewParagraph()
 	p.Text = " CMSC312 Operating System Simulator "
 	p.SetRect(0, 0, 25, 5)
 
-	readys = NewProcWidget(&k.ReadyQ)
+	readys = NewProcWidget(&s.ReadyQ)
 	readys.Title = " Ready Processes "
 	readys.TextStyle = ui.NewStyle(ui.ColorYellow)
 	// readys.WrapText = false
 	readys.SetRect(0, 0, 25, 8)
 
-	waitings = NewProcWidget(&k.WaitingQ)
+	waitings = NewProcWidget(&s.WaitingQ)
 	waitings.Title = " Waiting Processes "
 	waitings.TextStyle = ui.NewStyle(ui.ColorYellow)
 	// waitings.WrapText = false
@@ -69,7 +69,7 @@ func InitWidgets(k *kernel.Kernel) {
 
 }
 
-func Map(vs []*kernel.Process, f func(*kernel.Process) string) []string {
+func Map(vs []*sched.Process, f func(*sched.Process) string) []string {
 	vsm := make([]string, len(vs))
 	for i, v := range vs {
 		vsm[i] = f(v)
@@ -101,7 +101,7 @@ func Render() {
 	ui.Render(grid)
 }
 
-func Launch(args []string, ch chan *kernel.Process) bool {
+func Launch(args []string, ch chan *sched.Process) bool {
 
 	switch args[0] {
 
@@ -123,7 +123,7 @@ func Launch(args []string, ch chan *kernel.Process) bool {
 			break
 		}
 
-		err = kernel.LoadTemplate(filename, numOfProc, ch)
+		err = sched.LoadTemplate(filename, numOfProc, ch)
 		if err != nil {
 			break
 		}
@@ -138,7 +138,7 @@ func Launch(args []string, ch chan *kernel.Process) bool {
 	return false
 }
 
-func EventLoop(ch chan *kernel.Process) {
+func EventLoop(ch chan *sched.Process) {
 	drawTicker := time.NewTicker(updateInterval).C
 
 	// handles kill signal sent to go
