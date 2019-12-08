@@ -193,7 +193,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 		}
 
 		// Jitter values by +-20
-		templateValue += r.Intn(20) - 10
+		templateValue += r.Intn(10) - 5
 
 		if templateValue < 0 {
 			templateValue = 0
