@@ -70,13 +70,19 @@ func main() {
 	go s.RunRoundRobin()
 	// go k.RunFirstComeFirst
 
+	// Initialize the TUI
 	if err := ui.Init(); err != nil {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer ui.Close()
 
+	// Point the widgets to the scheduler
 	tui.InitWidgets(s)
+
+	// Render initial state to the terminal
 	tui.Render()
+
+	// Start the tui event loop
 	tui.EventLoop(ch)
 
 }
