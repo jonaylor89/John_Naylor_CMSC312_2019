@@ -8,19 +8,19 @@ will live in the repository.
 
 without docker
 ```sh
-~$ go build -o OS
+~$ make
 ```
 
 with docker
 ```
-~$ docker build -t jonaylor/operatingsystem:os .
+~$ make docker-build
 ```
 
 # Execution
 
 without docker
 ```
-~$ ./OS
+~$ ./jose
 ```
 
 with docker
@@ -51,7 +51,7 @@ The available commands for the shell are:
 To execute all tests for the application:
 
 ```
-~$ go test ./...
+~$ make test
 ```
 
 and for an individual module, just:

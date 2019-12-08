@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY . .
  
-RUN go build -o OS
+RUN make
 
 ######## Start a new stage from scratch #######
 FROM alpine:latest 
