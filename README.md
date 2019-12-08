@@ -25,7 +25,7 @@ without docker
 
 with docker
 ```
-~$ docker run -it jonaylor/operatingsystem:os
+~$ docker run -it jose:latest
 ```
 
 # Usage
