@@ -104,3 +104,9 @@ Please remember that these requirements are minimal requirements for C/D grade. 
     - pipes
 - Two CPUs and Schedulers
 - return when IO from process.execute to kernel
+- Config for switching schedulers
+    - `- sched="rr" || sched="fcfs"`
+- Init methods 
+    - CPU
+    - Memory
+    - Scheduler
