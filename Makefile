@@ -27,11 +27,13 @@ setup:
 		&& go mod vendor
 
 .PHONY: docker-build
+## docker-build: build docker image and tag with latest commit
 docker-build: build
 	docker build -t ${APP} .
 	docker tag ${APP} ${REGISTRY}/${APP}:${COMMIT_SHA}
 
 .PHONY: docker-push
+## docker-push: push latest docker image to docker hub
 docker-push: docker-build
 	@docker push ${REGISTRY}/${APP}:${COMMIT_SHA}
 
