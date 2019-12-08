@@ -2,7 +2,7 @@ package kernel
 
 import (
 	"bufio"
-	"fmt"
+	// "fmt"
 	"io"
 	"os"
 	"strconv"
@@ -37,7 +37,7 @@ func (k *Kernel) RunRoundRobin() {
 		for i := len(k.ReadyQ) - 1; i > 0; i-- {
 			curProc := k.ReadyQ[i]
 
-			curProc.state = RUN
+			curProc.State = RUN
 
 			timeNull := k.CPU.TotalCycles
 
@@ -48,13 +48,13 @@ func (k *Kernel) RunRoundRobin() {
 				err := curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
 				if err != nil {
 
-					curProc.state = EXIT
+					curProc.State = EXIT
 					k.ReadyQ = remove(k.ReadyQ, i)
 					k.Mem.RemovePages(curProc.PID)
 					break
 				}
 
-				curProc.state = READY
+				curProc.State = READY
 			}
 
 		}
@@ -78,15 +78,15 @@ func (k *Kernel) RunFirstComeFirstServe() {
 			var curProc *Process
 			curProc, k.ReadyQ = k.ReadyQ[0], k.ReadyQ[1:]
 
-			curProc.state = RUN
+			curProc.State = RUN
 
 			// Execute process until it terminates
 			for {
 
 				curProc.Execute(k.CPU, k.Mem, k.InMsg, k.Mailboxes)
 
-				if curProc.runtime <= 0 {
-					curProc.state = EXIT
+				if curProc.Runtime <= 0 {
+					curProc.State = EXIT
 					break
 				}
 			}
@@ -106,11 +106,11 @@ func (k *Kernel) assessWaiting() {
 		if k.memoryCheck() {
 			k.WaitingQ = remove(k.WaitingQ, i)
 
-			proc.state = READY
+			proc.State = READY
 
 			k.ReadyQ = append(k.ReadyQ, proc)
 
-			k.Mem.Add(proc.memory, proc.PID)
+			k.Mem.Add(proc.Memory, proc.PID)
 		}
 	}
 }
@@ -135,21 +135,21 @@ func (k *Kernel) recvProc() {
 				if k.memoryCheck() {
 
 					// If memory available then set to READY
-					x.state = READY
+					x.State = READY
 
 					// New process ready to be executed
 					k.ReadyQ = append(k.ReadyQ, x)
 
 				} else {
 					// If memory not available then set to WAIT
-					x.state = WAIT
+					x.State = WAIT
 
 					// New process waiting for memory
 					k.WaitingQ = append(k.WaitingQ, x)
 
 				}
 
-				x.pages = k.Mem.Add(x.memory, x.PID)
+				x.pages = k.Mem.Add(x.Memory, x.PID)
 
 			} else {
 				// Channel is closed to execution must exit
@@ -168,7 +168,7 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process
 
 	f, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("error opening file", err)
+		// fmt.Println("error opening file", err)
 		return nil
 	}
 
@@ -192,7 +192,7 @@ func LoadTemplate(filename string, numOfProcesses int, processChan chan *Process
 		instruction, err := utils.ReadLine(reader)
 		if err != nil {
 			if err != io.EOF {
-				fmt.Printf(" > Failed!: %v\n", err)
+				// fmt.Printf(" > Failed!: %v\n", err)
 				return err
 			}
 

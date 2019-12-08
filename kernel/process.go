@@ -46,9 +46,9 @@ type Process struct {
 	// And there will be a list of all process control blocks
 	PID      int    // Process ID
 	Name     string // Process Name
-	state    int    // Process State
-	runtime  int    // Runtime Requirement
-	memory   int    // Memory Requirement
+	State    int    // Process State
+	Runtime  int    // Runtime Requirement
+	Memory   int    // Memory Requirement
 	children []int  // List of PID to child processes
 	parent 	*Process // Parent process
 	ip		 int    // Instruction pointer
@@ -67,9 +67,9 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 	return &Process{
 		PID:      ProcNum,
 		Name:     name,
-		state:    NEW,
-		runtime:  runtime,
-		memory:   mem,
+		State:    NEW,
+		Runtime:  runtime,
+		Memory:   mem,
 		children: []int{},
 		parent: parent,
 		ip: 	  insPointer,
@@ -102,7 +102,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 
 	case code.CALC:
 
-		cpu.RunCycle(p.runtime)
+		cpu.RunCycle(p.Runtime)
 
 		// Subtract one from the time
 		p.ins[p.ip+1]--
@@ -124,7 +124,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		p.ip++
 
 		// create child process
-		child := CreateProcess("Fork: "+p.Name, p.runtime, p.memory, p.ins, p.ip, p)
+		child := CreateProcess("Fork: "+p.Name, p.Runtime, p.Memory, p.ins, p.ip, p)
 
 		// Add child process to list of children of parent
 		p.children = append(p.children, child.PID)

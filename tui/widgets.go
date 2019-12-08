@@ -3,8 +3,8 @@ package tui
 
 import (
 	// "log"
+	// "fmt"
 	"math"
-	"fmt"
 	"time"
 	"os"
 	"os/signal"
@@ -25,8 +25,8 @@ const (
 var (
 	p0 *widgets.Plot
 	p  *widgets.Paragraph
-	l  *widgets.List
-	l0  *widgets.List
+	readys *ProcWidget
+	waitings *ProcWidget
 	i *TextBox
 	grid *ui.Grid
 	
@@ -57,7 +57,7 @@ func InitWidgets(k *kernel.Kernel) {
 	}()
 
 	p0 = widgets.NewPlot()
-	p0.Title = "Memory Usage"
+	p0.Title = " Memory Usage "
 	p0.Data = sinData
 	p0.SetRect(0, 0, 50, 15)
 	p0.AxesColor = ui.ColorWhite
@@ -65,26 +65,20 @@ func InitWidgets(k *kernel.Kernel) {
 	p0.LineColors[1] = ui.ColorBlue
 
 	p = widgets.NewParagraph()
-	p.Text = "CMSC312 Operating System Simulator (press `q` to quit)"
+	p.Text = " CMSC312 Operating System Simulator "
 	p.SetRect(0, 0, 25, 5)
 
-	l = widgets.NewList()
-	l.Title = "Ready Processes"
-	l.Rows = Map(k.ReadyQ, func(p *kernel.Process) string {
-		return fmt.Sprintf("%#v", p)
-	})
-	l.TextStyle = ui.NewStyle(ui.ColorYellow)
-	l.WrapText = false
-	l.SetRect(0, 0, 25, 8)
+	readys = NewProcWidget(&k.ReadyQ)
+	readys.Title = " Ready Processes "
+	readys.TextStyle = ui.NewStyle(ui.ColorYellow)
+	// readys.WrapText = false
+	readys.SetRect(0, 0, 25, 8)
 
-	l0 = widgets.NewList()
-	l0.Title = "Waiting Processes"
-	l0.Rows = Map(k.WaitingQ, func(p *kernel.Process) string {
-		return fmt.Sprintf("%#v", p)
-	})
-	l0.TextStyle = ui.NewStyle(ui.ColorYellow)
-	l0.WrapText = false
-	l0.SetRect(0, 0, 25, 8)
+	waitings = NewProcWidget(&k.WaitingQ)
+	waitings.Title = " Waiting Processes "
+	waitings.TextStyle = ui.NewStyle(ui.ColorYellow)
+	// waitings.WrapText = false
+	waitings.SetRect(0, 0, 25, 8)
 
 	i = NewTextBox()
 	i.SetText(PROMPT)
@@ -111,8 +105,8 @@ func Render() {
 			ui.NewCol(1.0/1, p),
 		),
 		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/2, l),
-			ui.NewCol(1.0/2, l0),
+			ui.NewCol(1.0/2, readys),
+			ui.NewCol(1.0/2, waitings),
 		),
 		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/1, p0),
