@@ -33,51 +33,51 @@ type MemWidget struct {
 // 	)
 // }
 
-func (self *MemWidget) updateMainMemory() {
-	// self.renderMemInfo("Main", MemoryInfo{
+func (m *MemWidget) updateMainMemory() {
+	// m.renderMemInfo("Main", MemoryInfo{
 	// 	Total:       mainMemory.Total,
 	// 	Used:        mainMemory.Used,
 	// 	UsedPercent: mainMemory.UsedPercent,
 	// })
-	self.Data[0] = append([]float64{float64(len(self.memory.PhysicalMemory))}, self.Data[0]...)
+	m.Data[0] = append([]float64{float64(len(m.memory.PhysicalMemory))}, m.Data[0]...)
 }
 
-func (self *MemWidget) updateVirtualMemory() {
-	// self.renderMemInfo("Virtual", MemoryInfo{
+func (m *MemWidget) updateVirtualMemory() {
+	// m.renderMemInfo("Virtual", MemoryInfo{
 	// 	Total:       mainMemory.Total,
 	// 	Used:        mainMemory.Used,
 	// 	UsedPercent: mainMemory.UsedPercent,
 	// })
 
-	self.Data[1] = append([]float64{float64(len(self.memory.VirtualMemory))}, self.Data[1]...)
+	m.Data[1] = append([]float64{float64(len(m.memory.VirtualMemory))}, m.Data[1]...)
 
 }
 
 func NewMemWidget(mem *memory.Memory) *MemWidget {
-	self := &MemWidget{
+	m := &MemWidget{
 		Plot:           widgets.NewPlot(),
 		updateInterval: time.Second,
 		memory:         mem,
 	}
-	self.Title = " Memory Usage "
-	self.HorizontalScale = 7
-	self.DrawDirection = widgets.DrawRight
+	m.Title = " Memory Usage "
+	m.HorizontalScale = 7
+	m.DrawDirection = widgets.DrawRight
 
-	self.Data = make([][]float64, 2)
-	self.Data[0] = []float64{0}
-	self.Data[1] = []float64{0}
+	m.Data = make([][]float64, 2)
+	m.Data[0] = []float64{0}
+	m.Data[1] = []float64{0}
 
-	self.updateMainMemory()
-	self.updateVirtualMemory()
+	m.updateMainMemory()
+	m.updateVirtualMemory()
 
 	go func() {
-		for range time.NewTicker(self.updateInterval).C {
-			self.Lock()
-			self.updateMainMemory()
-			self.updateVirtualMemory()
-			self.Unlock()
+		for range time.NewTicker(m.updateInterval).C {
+			m.Lock()
+			m.updateMainMemory()
+			m.updateVirtualMemory()
+			m.Unlock()
 		}
 	}()
 
-	return self
+	return m
 }

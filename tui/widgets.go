@@ -75,7 +75,7 @@ func Map(vs []*sched.Process, f func(*sched.Process) string) []string {
 	return vsm
 }
 
-func Render() {
+func RenderTUI() {
 	// TUI
 
 	grid = ui.NewGrid()

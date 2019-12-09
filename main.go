@@ -47,7 +47,7 @@ func main() {
 	tui.InitWidgets(s1)
 
 	// Render initial state to the terminal
-	tui.Render()
+	tui.RenderTUI()
 
 	// Start the tui event loop
 	tui.EventLoop(ch)
