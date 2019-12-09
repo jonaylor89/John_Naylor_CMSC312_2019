@@ -22,3 +22,6 @@ Memory:
 
   # Should be a power of 2
   TotalRam: 4096
+
+  # Size of ARC Cache
+  CacheSize: 128

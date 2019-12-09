@@ -40,8 +40,9 @@ type CPU struct {
 
 // Memory : Memory configuration
 type Memory struct {
-	PageSize int `yaml:"PageSize"`
-	TotalRam int `yaml:"TotalRam"`
+	PageSize  int `yaml:"PageSize"`
+	TotalRam  int `yaml:"TotalRam"`
+	CacheSize int `yaml:"CacheSize"`
 }
 
 // ReadConfig : read config file and serialize
@@ -85,6 +86,10 @@ func ReadConfig(file string) Config {
 
 	if conf.Memory.TotalRam <= 0 || conf.Memory.TotalRam < conf.Memory.PageSize {
 		log.Fatal("[ERROR] Total RAM must be above zero")
+	}
+
+	if conf.Memory.CacheSize <= 0 {
+		log.Fatal("[ERROR] Cache size must be above zero")
 	}
 
 	return conf

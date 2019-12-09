@@ -27,7 +27,7 @@ func main() {
 	// Initialize resources
 	cpu1 := cpu.InitCPU(conf.CPU.ClockSpeed1)
 	// cpu2 := cpu.InitCPU(conf.CPU.ClockSpeed2)
-	mem := memory.InitMemory(conf.Memory.PageSize, conf.Memory.TotalRam)
+	mem := memory.InitMemory(conf.Memory.PageSize, conf.Memory.TotalRam, conf.Memory.CacheSize)
 
 	// Initialize Scheduler
 	s1 := sched.InitScheduler(cpu1, mem, ch, conf.MinimumFreeFrames, conf.Sched.TimeQuantum)

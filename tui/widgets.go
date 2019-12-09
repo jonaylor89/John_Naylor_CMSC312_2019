@@ -19,11 +19,11 @@ const (
 )
 
 var (
-	header        *widgets.Paragraph
+	header   *widgets.Paragraph
 	readys   *ProcWidget
 	waitings *ProcWidget
 	mems     *MemWidget
-	shell        *TextBox
+	shell    *TextBox
 	grid     *ui.Grid
 
 	updateInterval = time.Second / 10
@@ -140,7 +140,7 @@ func Launch(args []string, ch chan *sched.Process) bool {
 	return false
 }
 
- // EventLoop : Main tui event loop
+// EventLoop : Main tui event loop
 func EventLoop(ch chan *sched.Process) {
 
 	// framerate

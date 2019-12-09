@@ -13,14 +13,14 @@ import (
 
 // Scheduler : manager for resources and controller to schedule process to run
 type Scheduler struct {
-	CPU               *cpu.CPU        // CPU the scheduler is assigned
-	Mem               *memory.Memory  // Memory module the scheduler is assigned
-	InMsg             chan *Process   // Message channel where scheduler receives processes
-	ReadyQ            []*Process      // Ready Queue for processes
-	WaitingQ          []*Process      // Waiting Queue for processes
-	MinimumFreeFrames int             // Minimum number of frames for a process to be made ready
-	TimeQuantum       int             // Time quantum for a process using round robin
-	Mailboxes         []chan byte     // Mailboxes for interprocess communication
+	CPU               *cpu.CPU       // CPU the scheduler is assigned
+	Mem               *memory.Memory // Memory module the scheduler is assigned
+	InMsg             chan *Process  // Message channel where scheduler receives processes
+	ReadyQ            []*Process     // Ready Queue for processes
+	WaitingQ          []*Process     // Waiting Queue for processes
+	MinimumFreeFrames int            // Minimum number of frames for a process to be made ready
+	TimeQuantum       int            // Time quantum for a process using round robin
+	Mailboxes         []chan byte    // Mailboxes for interprocess communication
 }
 
 // InitScheduler : create new scheduler

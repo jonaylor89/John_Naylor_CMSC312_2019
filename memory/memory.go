@@ -2,6 +2,8 @@ package memory
 
 import (
 	"math"
+
+	"github.com/hashicorp/golang-lru"
 )
 
 var (
@@ -23,6 +25,9 @@ type Memory struct {
 
 	// PhysicalMemory : Memory in RAM
 	PhysicalMemory []*Page
+
+	// Cache : Cache of pages
+	Cache *lru.ARCCache
 }
 
 // Page : a page of memory
@@ -33,18 +38,27 @@ type Page struct {
 }
 
 // InitMemory : create new memory unit
-func InitMemory(pageSize int, totalRam int) *Memory {
+func InitMemory(pageSize int, totalRam int, cacheSize int) *Memory {
+
+	cache, _ := lru.NewARC(cacheSize)
+
 	return &Memory{
 		PageSize:       pageSize,
 		TotalRam:       totalRam,
 		PageTable:      make(map[int]int),
 		VirtualMemory:  make([]*Page, 0),
 		PhysicalMemory: make([]*Page, 0, totalRam/pageSize),
+		Cache:          cache,
 	}
 }
 
 // GetPage : get a page of memory
 func (m *Memory) Get(pageNum int) *Page {
+
+	// Check if the page is in the cache
+	if result, ok := m.Cache.Get(pageNum); ok {
+		return result.(*Page)
+	}
 
 	// Check for page in PhysicalMemory
 	if val, ok := m.PageTable[pageNum]; ok {
@@ -57,6 +71,9 @@ func (m *Memory) Get(pageNum int) *Page {
 
 			// Move the page to physical memory once found
 			m.moveToPhysicalMemory(page, i)
+
+			// Add page to the cache
+			m.Cache.Add(pageNum, page)
 
 			return page
 		}
