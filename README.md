@@ -98,8 +98,6 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 
 ### TODO
 - Critical section for multithreading
-- Memory caching
-    - Memory hierarchy
 - Parent + child
     - pipes
 - Two CPUs and Schedulers
