@@ -2,6 +2,7 @@ package sched
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -61,7 +62,10 @@ type Process struct {
 // CreateProcess : create a new process correctly
 func CreateProcess(name string, runtime int, mem int, ins code.Instructions, insPointer int, parent *Process) *Process {
 
+	// Increment the number of processes that have been created
 	ProcNum++
+
+	// Give the process a mailbox assignment
 	mailboxAssignment = (mailboxAssignment + 1) % 10
 
 	return &Process{
@@ -80,12 +84,10 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 	}
 }
 
-// String : string reporesentation of process
-// func (p *Process) String() string {
-// 	return fmt.Sprintf("Name: %s ;Instructions: %s",
-// 					p.Name,
-// 					p.ins)
-// }
+// String : string representation of process
+func (p *Process) String() string {
+	return fmt.Sprintf("Name: %s, CPU: %d, Memory: %d", p.Name, p.Runtime, p.Memory)
+}
 
 // Execute : execute instruction in process
 func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, mail []chan byte) error {
@@ -94,6 +96,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		return fmt.Errorf("End of instructions")
 	}
 
+	// Current instruction to execute
 	curIns := p.ins[p.ip]
 	op := code.Opcode(curIns)
 
@@ -103,7 +106,7 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 
 		cpu.RunCycle(p.Runtime)
 
-		// Subtract one from the time
+		// Subtract one from the runtime
 		p.ins[p.ip+1]--
 
 		time := code.ReadUint8(p.ins[p.ip+1:])
@@ -192,7 +195,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 
 		templateValue, err := strconv.Atoi(instruction[1])
 		if err != nil {
-			fmt.Println("error converting runtime to int", err)
+			log.Fatal("error converting operand to int", err)
 		}
 
 		// Jitter values by +-20
@@ -202,6 +205,7 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 			templateValue = 0
 		}
 
+		// Keep track of the total number of `calc` times for total runtime
 		if instruction[0] == "CALC" {
 			totalRuntime += templateValue
 		}
@@ -209,8 +213,11 @@ func CreateRandomProcessFromTemplate(templateName string, memory int, instructio
 		instruction[1] = strconv.Itoa(templateValue)
 	}
 
+	// Convert memory heavy 2d string array to dense byte array
 	program := code.Assemble(instructions)
 
 	p := CreateProcess("From template: "+templateName, totalRuntime, memory, program, 0, nil)
+
+	// Send process to the scheduler
 	ch <- p
 }

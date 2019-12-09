@@ -24,7 +24,7 @@ func ShuffleInstructions(vals [][]string) {
 	}
 }
 
-// ReadLine : read and parse line into 2d arrat
+// ReadLine : read and parse line into 2d array
 func ReadLine(reader *bufio.Reader) ([]string, error) {
 
 	line, err := reader.ReadString('\n')
@@ -38,6 +38,7 @@ func ReadLine(reader *bufio.Reader) ([]string, error) {
 	return elements, nil
 }
 
+// StrToIntArray : Converts an array of ascii numbers to go integers
 func StrToIntArray(strArray []string) []int {
 
 	ret := make([]int, 0)

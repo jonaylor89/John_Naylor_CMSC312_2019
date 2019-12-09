@@ -10,7 +10,7 @@ import (
 
 // ProcChanSize: 1000
 // Sched:
-//   TimeQuatum: 50
+//   TimeQuantum: 50
 // CPU:
 //   ClockSpeed: 10
 // Memory:
@@ -58,6 +58,10 @@ func ReadConfig(file string) Config {
 	if err != nil {
 		log.Fatalf("[ERROR] %v", err)
 	}
+
+	/*********************************************************
+		Simple Validation for the values in the config file
+	 *********************************************************/
 
 	if conf.ProcChanSize <= 0 {
 		log.Fatal("[ERROR] Process channel size must be above zero")

@@ -18,7 +18,7 @@ type CPU struct {
 func InitCPU(speed time.Duration) *CPU {
 	return &CPU{
 		TotalCycles: 0,
-		Speed: speed,
+		Speed:       speed,
 	}
 }
 

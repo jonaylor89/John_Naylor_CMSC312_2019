@@ -1,30 +1,24 @@
 package main
 
 import (
-	// "bufio"
-	// "fmt"
 	"log"
-	// "os"
-	// "strconv"
-	// "strings"
-	// "time"
 
 	ui "github.com/gizak/termui/v3"
 
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/config"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/cpu"
-	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/memory"
+	"github.com/jonaylor89/John_Naylor_CMSC312_2019/sched"
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/tui"
 )
 
 const (
-	CONFIG_FILE = "config.yml"
+	ConfigFile = "config.yml"
 )
 
 func main() {
 
-	conf := config.ReadConfig(CONFIG_FILE)
+	conf := config.ReadConfig(ConfigFile)
 
 	// Message channel to scheduler
 	ch := make(chan *sched.Process, conf.ProcChanSize)

@@ -2,7 +2,6 @@ package sched
 
 import (
 	"bufio"
-	// "fmt"
 	"io"
 	"os"
 	"strconv"
@@ -14,20 +13,20 @@ import (
 
 // Scheduler : manager for resources and controller to schedule process to run
 type Scheduler struct {
-	CPU               *cpu.CPU
-	Mem               *memory.Memory
-	InMsg             chan *Process
-	ReadyQ            []*Process
-	WaitingQ          []*Process
-	MinimumFreeFrames int
-	TimeQuantum       int
-	Mailboxes         []chan byte
-	// DeviceQ  []*Process
+	CPU               *cpu.CPU        // CPU the scheduler is assigned
+	Mem               *memory.Memory  // Memory module the scheduler is assigned
+	InMsg             chan *Process   // Message channel where scheduler receives processes
+	ReadyQ            []*Process      // Ready Queue for processes
+	WaitingQ          []*Process      // Waiting Queue for processes
+	MinimumFreeFrames int             // Minimum number of frames for a process to be made ready
+	TimeQuantum       int             // Time quantum for a process using round robin
+	Mailboxes         []chan byte     // Mailboxes for interprocess communication
 }
 
 // InitScheduler : create new scheduler
-func InitScheduler(cpu *cpu.CPU, mem *memory.Memory, in chan *Process,minimumFreeFrames int, timeQuantum int) *Scheduler {
-	return &Scheduler{
+func InitScheduler(cpu *cpu.CPU, mem *memory.Memory, in chan *Process, minimumFreeFrames int, timeQuantum int) *Scheduler {
+
+	s := &Scheduler{
 		CPU:               cpu,
 		Mem:               mem,
 		InMsg:             in,
@@ -48,14 +47,17 @@ func InitScheduler(cpu *cpu.CPU, mem *memory.Memory, in chan *Process,minimumFre
 			make(chan byte, 10),
 		},
 	}
+
+	// start checking for new processes
+	go s.recvProc()
+
+	return s
 }
 
 // RunRoundRobin : Start the schedule and process execution
 func (s *Scheduler) RunRoundRobin() {
 
-	// Check for new processes
-	go s.recvProc()
-
+	// event loop
 	for {
 
 		// Loop through processes backwards and execute them off a time quantum
@@ -93,14 +95,13 @@ func (s *Scheduler) RunRoundRobin() {
 // RunFirstComeFirstServe : First come first serve algorithm
 func (s *Scheduler) RunFirstComeFirstServe() {
 
-	// Check for new processes
-	go s.recvProc()
-
 	for {
 
 		if len(s.ReadyQ) > 0 {
 
 			var curProc *Process
+
+			// Pop from ready queue
 			curProc, s.ReadyQ = s.ReadyQ[0], s.ReadyQ[1:]
 
 			curProc.State = RUN
@@ -110,6 +111,7 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 
 				curProc.Execute(s.CPU, s.Mem, s.InMsg, s.Mailboxes)
 
+				// Is no more runtime, terminate process
 				if curProc.Runtime <= 0 {
 					curProc.State = EXIT
 					break
@@ -124,6 +126,7 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 	}
 }
 
+// look through the waiting queue and see if any processes are ready
 func (s *Scheduler) assessWaiting() {
 	for i := len(s.WaitingQ) - 1; i > 0; i-- {
 		proc := s.WaitingQ[i]
@@ -140,6 +143,7 @@ func (s *Scheduler) assessWaiting() {
 	}
 }
 
+// Check if more than the minimum free frames are available
 func (s *Scheduler) memoryCheck() bool {
 	if cap(s.Mem.PhysicalMemory)-len(s.Mem.PhysicalMemory) > s.MinimumFreeFrames {
 		return true
@@ -148,11 +152,12 @@ func (s *Scheduler) memoryCheck() bool {
 	return false
 }
 
+// recvProc keeps an eye on the process channel
 func (s *Scheduler) recvProc() {
 
 	for {
 
-		// Checs for new processes to schedule
+		// Checks for new processes to schedule
 		select {
 		case x, ok := <-s.InMsg:
 			if ok {

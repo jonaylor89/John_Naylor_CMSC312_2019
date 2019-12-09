@@ -1,8 +1,6 @@
 package tui
 
 import (
-	// "log"
-	// "fmt"
 	"os"
 	"os/signal"
 	"strconv"
@@ -21,16 +19,16 @@ const (
 )
 
 var (
-	p        *widgets.Paragraph
+	header        *widgets.Paragraph
 	readys   *ProcWidget
 	waitings *ProcWidget
 	mems     *MemWidget
-	i        *TextBox
+	shell        *TextBox
 	grid     *ui.Grid
 
 	updateInterval = time.Second / 10
 
-	PRINTABLE_KEYS = append(
+	PrintableKeys = append(
 		strings.Split(
 			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ,./<>?;:'\"[]\\{}|`~!@#$%^&*()-_=+",
 			"",
@@ -45,9 +43,9 @@ func InitWidgets(s *sched.Scheduler) {
 	mems = NewMemWidget(s.Mem)
 	mems.SetRect(0, 0, 25, 5)
 
-	p = widgets.NewParagraph()
-	p.Text = " CMSC312 Operating System Simulator "
-	p.SetRect(0, 0, 25, 5)
+	header = widgets.NewParagraph()
+	header.Text = " CMSC 312 Operating System Simulator "
+	header.SetRect(0, 0, 25, 5)
 
 	readys = NewProcWidget(&s.ReadyQ)
 	readys.Title = " Ready Processes "
@@ -61,11 +59,11 @@ func InitWidgets(s *sched.Scheduler) {
 	// waitings.WrapText = false
 	waitings.SetRect(0, 0, 25, 8)
 
-	i = NewTextBox()
-	i.SetText(PROMPT)
-	i.SetRect(25, 25, 50, 40)
-	i.Border = false
-	i.ShowCursor = true
+	shell = NewTextBox()
+	shell.SetText(PROMPT)
+	shell.SetRect(25, 25, 50, 40)
+	shell.Border = false
+	shell.ShowCursor = true
 
 }
 
@@ -79,11 +77,13 @@ func Map(vs []*sched.Process, f func(*sched.Process) string) []string {
 
 func Render() {
 	// TUI
+
 	grid = ui.NewGrid()
 
+	// et grid dimensions
 	grid.Set(
 		ui.NewRow(1.0/3,
-			ui.NewCol(1.0/1, p),
+			ui.NewCol(1.0/1, header),
 		),
 		ui.NewRow(1.0/3,
 			ui.NewCol(1.0/2, readys),
@@ -94,15 +94,17 @@ func Render() {
 		),
 	)
 
+	// Adapt to terminal width and height
 	termWidth, termHeight := ui.TerminalDimensions()
 	grid.SetRect(0, 0, termWidth, termHeight-1)
-	i.SetRect(0, termHeight-1, termWidth, termHeight)
+	shell.SetRect(0, termHeight-1, termWidth, termHeight)
 
 	ui.Render(grid)
 }
 
 func Launch(args []string, ch chan *sched.Process) bool {
 
+	// Interpret commands
 	switch args[0] {
 
 	case "load":
@@ -138,7 +140,10 @@ func Launch(args []string, ch chan *sched.Process) bool {
 	return false
 }
 
+ // EventLoop : Main tui event loop
 func EventLoop(ch chan *sched.Process) {
+
+	// framerate
 	drawTicker := time.NewTicker(updateInterval).C
 
 	// handles kill signal sent to go
@@ -147,15 +152,13 @@ func EventLoop(ch chan *sched.Process) {
 
 	uiEvents := ui.PollEvents()
 
-	// previousKey := ""
-
 	for {
 		select {
 		case <-sigTerm:
 			return
 		case <-drawTicker:
 			ui.Render(grid)
-			ui.Render(i)
+			ui.Render(shell)
 		case e := <-uiEvents:
 			switch e.ID {
 			case "<C-c>":
@@ -163,37 +166,37 @@ func EventLoop(ch chan *sched.Process) {
 			case "<Resize>":
 				payload := e.Payload.(ui.Resize)
 				grid.SetRect(0, 0, payload.Width, payload.Height-1)
-				i.SetRect(0, payload.Height-1, payload.Width, payload.Height)
+				shell.SetRect(0, payload.Height-1, payload.Width, payload.Height)
 				ui.Clear()
 
 			case "<Left>":
-				i.MoveCursorLeft()
+				shell.MoveCursorLeft()
 			case "<Right>":
-				i.MoveCursorRight()
+				shell.MoveCursorRight()
 			case "<Up>":
-				i.MoveCursorUp()
+				shell.MoveCursorUp()
 			case "<Down>":
-				i.MoveCursorDown()
+				shell.MoveCursorDown()
 			case "<Backspace>":
-				i.Backspace()
+				shell.Backspace()
 			case "<Enter>":
 				// Execute command that's set
 
-				args := strings.Split(i.GetText(), " ")[1:]
+				args := strings.Split(shell.GetText(), " ")[1:]
 
 				if quit := Launch(args, ch); quit {
 					return
 				}
 
-				i.ClearText()
-				i.SetText(PROMPT)
+				shell.ClearText()
+				shell.SetText(PROMPT)
 			case "<Tab>":
-				i.InsertText("\t")
+				shell.InsertText("\t")
 			case "<Space>":
-				i.InsertText(" ")
+				shell.InsertText(" ")
 			default:
-				if ContainsString(PRINTABLE_KEYS, e.ID) {
-					i.InsertText(e.ID)
+				if ContainsString(PrintableKeys, e.ID) {
+					shell.InsertText(e.ID)
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 package memory
 
 import (
-	// "fmt"
 	"math"
 )
 
@@ -28,9 +27,9 @@ type Memory struct {
 
 // Page : a page of memory
 type Page struct {
-	PageID   int // ID of page
-	ProcID   int // Process ID of the process using this page
-	contents []byte
+	PageID   int    // ID of page
+	ProcID   int    // Process ID of the process using this page
+	contents []byte // Contents of the page of memory
 }
 
 // InitMemory : create new memory unit
@@ -46,15 +45,17 @@ func InitMemory(pageSize int, totalRam int) *Memory {
 
 // GetPage : get a page of memory
 func (m *Memory) Get(pageNum int) *Page {
-	// Check for page in PhysicalMemory
 
+	// Check for page in PhysicalMemory
 	if val, ok := m.PageTable[pageNum]; ok {
 		return m.PhysicalMemory[val]
 	}
 
+	// Otherwise, look through virtual memory for the page
 	for i, page := range m.VirtualMemory {
 		if page.PageID == pageNum {
 
+			// Move the page to physical memory once found
 			m.moveToPhysicalMemory(page, i)
 
 			return page
@@ -63,15 +64,10 @@ func (m *Memory) Get(pageNum int) *Page {
 
 	// Page doesn't exist
 	return nil
-
-	// 		put page from vm in main memory in either a free space or replacement algorithm
-	// 		add to page table
-	// 		return page
 }
 
 // AddPage : Add pages of memory to memory pool, return PageIDs
 func (m *Memory) Add(requirement int, pid int) []int {
-	// Append new page to virtual memory
 
 	var pageIds []int
 
@@ -89,12 +85,15 @@ func (m *Memory) Add(requirement int, pid int) []int {
 
 		pageIds = append(pageIds, pageNum)
 
+		// Append new page to virtual memory
 		m.VirtualMemory = append(m.VirtualMemory, p)
 	}
 
+	// return pageIds for the process to keep track of
 	return pageIds
 }
 
+// moveToPhysicalMemory puts pages into RAM and adds the entry to the PageTable
 func (m *Memory) moveToPhysicalMemory(p *Page, indexInVm int) {
 
 	// Remove page from virtual memory

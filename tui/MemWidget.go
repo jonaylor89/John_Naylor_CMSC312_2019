@@ -1,8 +1,6 @@
 package tui
 
 import (
-	// "fmt"
-	// "log"
 	"time"
 
 	"github.com/gizak/termui/v3/widgets"

@@ -46,6 +46,7 @@ type Definition struct {
 	OperandWidths []int
 }
 
+// Match opcodes to their corresponding definition
 var definitions = map[Opcode]*Definition{
 	CALC:  {"CALC", []int{1}},
 	IO:    {"IO", []int{1}},
@@ -67,6 +68,7 @@ func Lookup(op byte) (*Definition, error) {
 	return def, nil
 }
 
+// fmtInstruction formats instructions with their operands for debugging
 func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	operandCount := len(def.OperandWidths)
 
@@ -77,14 +79,17 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 
 	switch operandCount {
 	case 0:
+		// Instructions with no operands are just their opcode
 		return def.Name
 	case 1:
+		// Append operand at the end of the opcode
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}
 
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)
 }
 
+// String : string format for an Instruction
 func (ins Instructions) String() string {
 	var out bytes.Buffer
 
@@ -163,13 +168,14 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 	return operands, offset
 }
 
-// Assemble : Assembly a 2 dimensions string array of opcode and operands into Instructions
+// Assemble : Assemble a 2 dimensions string array of opcode and operands into Instructions (byte array)
 func Assemble(instructions [][]string) Instructions {
 
 	program := Instructions{}
 	var op []byte
 
 	for _, ins := range instructions {
+		// match string version of opcode with the serialized version
 		switch ins[0] {
 		case "CALC":
 			op = Make(CALC, utils.StrToIntArray(ins[1:])...)

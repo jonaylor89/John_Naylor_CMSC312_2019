@@ -12,7 +12,8 @@ build: clean
 .PHONY: clean
 ## clean: cleans the binary
 clean:
-	rm -rf ${APP}
+	@echo "Removing executable..."
+	@rm -rf ${APP}
 
 .PHONY: test
 ## test: runs go test with default values
