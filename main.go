@@ -18,9 +18,13 @@ import (
 	"github.com/jonaylor89/John_Naylor_CMSC312_2019/tui"
 )
 
+const (
+	CONFIG_FILE = "config.yml"
+)
+
 func main() {
 
-	conf := config.ReadConfig("config.yml")
+	conf := config.ReadConfig(CONFIG_FILE)
 
 	// Message channel to scheduler
 	ch := make(chan *sched.Process, conf.ProcChanSize)
@@ -32,10 +36,11 @@ func main() {
 	mem := memory.InitMemory(conf.Memory.PageSize, conf.Memory.TotalRam)
 
 	// Initialize Scheduler
-	s := sched.InitScheduler(cpu1, mem, ch, conf.MinimumFreeFrames, conf.Sched.TimeQuantum)
+	s1 := sched.InitScheduler(cpu1, mem, ch, conf.MinimumFreeFrames, conf.Sched.TimeQuantum)
+	// s2 := sched.InitScheduler(cpu2, mem, ch, conf.MinimumFreeFrames, conf.Sched.TimeQuantum)
 
 	// Run the scheduler
-	go s.RunRoundRobin()
+	go s1.RunRoundRobin()
 	// go k.RunFirstComeFirst
 
 	// Initialize the TUI
@@ -45,7 +50,7 @@ func main() {
 	defer ui.Close()
 
 	// Point the widgets to the scheduler
-	tui.InitWidgets(s)
+	tui.InitWidgets(s1)
 
 	// Render initial state to the terminal
 	tui.Render()
