@@ -12,7 +12,6 @@ build: clean
 .PHONY: clean
 ## clean: cleans the binary
 clean:
-	@echo "Removing executable..."
 	@rm -rf ${APP}
 
 .PHONY: test
