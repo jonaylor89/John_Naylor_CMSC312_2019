@@ -25,6 +25,31 @@ type Scheduler struct {
 	// DeviceQ  []*Process
 }
 
+// InitScheduler : create new scheduler
+func InitScheduler(cpu *cpu.CPU, mem *memory.Memory, in chan *Process,minimumFreeFrames int, timeQuantum int) *Scheduler {
+	return &Scheduler{
+		CPU:               cpu,
+		Mem:               mem,
+		InMsg:             in,
+		ReadyQ:            []*Process{},
+		WaitingQ:          []*Process{},
+		MinimumFreeFrames: minimumFreeFrames,
+		TimeQuantum:       timeQuantum,
+		Mailboxes: []chan byte{
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+			make(chan byte, 10),
+		},
+	}
+}
+
 // RunRoundRobin : Start the schedule and process execution
 func (s *Scheduler) RunRoundRobin() {
 

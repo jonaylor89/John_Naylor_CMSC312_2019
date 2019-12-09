@@ -92,7 +92,7 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 ### Part three
 
 - [x] Multithreading
-- [_] GUI (or TUI)
+- [x] GUI (or TUI)
 
 ------------------------
 
@@ -107,6 +107,9 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 - Config for switching schedulers
     - `- sched="rr" || sched="fcfs"`
 - Init methods 
-    - CPU
-    - Memory
     - Scheduler
+- Kernel module
+    - Wrapper for:
+        - Sched
+        - Memory
+        - CPU

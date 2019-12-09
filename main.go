@@ -22,49 +22,17 @@ func main() {
 
 	conf := config.ReadConfig("config.yml")
 
-	// Message channel to kernel
+	// Message channel to scheduler
 	ch := make(chan *sched.Process, conf.ProcChanSize)
 	defer close(ch)
 
-	cpu1 := &cpu.CPU{
-		TotalCycles: 0,
-		Speed:       conf.CPU.ClockSpeed1,
-	}
+	// Initialize resources
+	cpu1 := cpu.InitCPU(conf.CPU.ClockSpeed1)
+	// cpu2 := cpu.InitCPU(conf.CPU.ClockSpeed2)
+	mem := memory.InitMemory(conf.Memory.PageSize, conf.Memory.TotalRam)
 
-	// cpu2 := &cpu.CPU{
-	// 	TotalCycles: 0,
-	// 	Speed: conf.CPU.ClockSpeed2,
-	// }
-
-	mem := &memory.Memory{
-		PageSize:       conf.Memory.PageSize,
-		TotalRam:       conf.Memory.TotalRam,
-		PageTable:      make(map[int]int),
-		VirtualMemory:  make([]*memory.Page, 0),
-		PhysicalMemory: make([]*memory.Page, 0, conf.Memory.TotalRam/conf.Memory.PageSize),
-	}
-
-	s := &sched.Scheduler{
-		CPU:               cpu1,
-		Mem:               mem,
-		InMsg:             ch,
-		ReadyQ:            []*sched.Process{},
-		WaitingQ:          []*sched.Process{},
-		MinimumFreeFrames: conf.MinimumFreeFrames,
-		TimeQuantum:       conf.Sched.TimeQuantum,
-		Mailboxes: []chan byte{
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-			make(chan byte, 10),
-		},
-	}
+	// Initialize Scheduler
+	s := sched.InitScheduler(cpu1, mem, ch, conf.MinimumFreeFrames, conf.Sched.TimeQuantum)
 
 	// Run the scheduler
 	go s.RunRoundRobin()

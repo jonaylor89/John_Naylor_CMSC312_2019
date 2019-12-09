@@ -33,9 +33,20 @@ type Page struct {
 	contents []byte
 }
 
+// InitMemory : create new memory unit
+func InitMemory(pageSize int, totalRam int) *Memory {
+	return &Memory{
+		PageSize:       pageSize,
+		TotalRam:       totalRam,
+		PageTable:      make(map[int]int),
+		VirtualMemory:  make([]*Page, 0),
+		PhysicalMemory: make([]*Page, 0, totalRam/pageSize),
+	}
+}
+
 // GetPage : get a page of memory
 func (m *Memory) Get(pageNum int) *Page {
-	// Check for page in PhyiscalMemory
+	// Check for page in PhysicalMemory
 
 	if val, ok := m.PageTable[pageNum]; ok {
 		return m.PhysicalMemory[val]
@@ -62,7 +73,7 @@ func (m *Memory) Get(pageNum int) *Page {
 func (m *Memory) Add(requirement int, pid int) []int {
 	// Append new page to virtual memory
 
-	pageIds := []int{}
+	var pageIds []int
 
 	numOfPages := int(math.Ceil(float64(requirement) / float64(m.PageSize)))
 
