@@ -97,12 +97,13 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 ------------------------
 
 ### TODO
-- Comment everything
 - Critical section for multithreading
 - Memory caching
+    - Memory hierarchy
 - Parent + child
     - pipes
 - Two CPUs and Schedulers
+    - Load balancer to control which processes go where
 - return when IO from process.execute to kernel
 - Sorting process table
 - Config for switching schedulers
