@@ -10,8 +10,8 @@ Sched:
 
 CPU:
   # Lower means faster
-  ClockSpeed1: 3
-  ClockSpeed2: 3
+  ClockSpeed1: 300
+  ClockSpeed2: 300
 
 
 Memory:

@@ -32,5 +32,5 @@ func (cpu *CPU) RunCycle(runtime int) {
 	runtime--
 
 	// Sleep before the next process
-	time.Sleep(cpu.Speed * time.Millisecond)
+	time.Sleep(cpu.Speed * time.Nanosecond)
 }

@@ -41,7 +41,7 @@ OS Shell
 The available commands for the shell are:
 - load
     - Load in template file and create processes from it
-    - e.g. load ProgramFiles/temp1.txt 1000
+    - e.g. `load ProgramFiles/cpu.prgm 10`
         - load template 1 and create 1000 processes
 - exit || quit
     - Exits simulator
@@ -104,10 +104,9 @@ Please remember that these requirements are minimal requirements for C/D grade. 
     - pipes
 - Two CPUs and Schedulers
 - return when IO from process.execute to kernel
+- Sorting process table
 - Config for switching schedulers
     - `- sched="rr" || sched="fcfs"`
-- Init methods 
-    - Scheduler
 - Kernel module
     - Wrapper for:
         - Sched
