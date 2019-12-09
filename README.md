@@ -33,9 +33,7 @@ with docker
 When executed, the OS Shell is shown. 
 
 ```
-OS Shell
--------------------
-==> 
+[os_simulator]$ 
 ```
 
 The available commands for the shell are:

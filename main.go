@@ -18,6 +18,7 @@ const (
 
 func main() {
 
+	// Read in configurations
 	conf := config.ReadConfig(ConfigFile)
 
 	// Message channel to scheduler
@@ -35,7 +36,7 @@ func main() {
 
 	// Run the scheduler
 	go s1.RunRoundRobin()
-	// go k.RunFirstComeFirst
+	// go s1.RunFirstComeFirst
 
 	// Initialize the TUI
 	if err := ui.Init(); err != nil {
