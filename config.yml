@@ -4,16 +4,18 @@ ProcChanSize: 1000
 # Minimum free frames for a process to be ready
 MinimumFreeFrames: 8
 
+# Settings for the scheduler
 Sched:
   # Lower means faster
   TimeQuantum: 50
 
+# Settings for the CPU
 CPU:
   # Lower means faster
   ClockSpeed1: 300
   ClockSpeed2: 300
 
-
+# Settings for the Memory
 Memory:
   # Should be a power of 2
   PageSize: 32
