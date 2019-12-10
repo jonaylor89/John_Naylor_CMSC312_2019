@@ -28,7 +28,7 @@ setup:
 
 .PHONY: docker-build
 ## docker-build: build docker image and tag with latest commit
-docker-build: build
+docker-build:
 	docker build -t ${APP} .
 	docker tag ${APP} ${REGISTRY}/${APP}:${COMMIT_SHA}
 
