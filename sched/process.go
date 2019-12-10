@@ -45,11 +45,12 @@ var (
 type Process struct {
 	// Some info should be in a process control block
 	// And there will be a list of all process control blocks
-	PID             int      // Process ID
-	Name            string   // Process Name
-	State           int      // Process State
-	Runtime         int      // Runtime Requirement
-	Memory          int      // Memory Requirement
+	PID             int    // Process ID
+	Name            string // Process Name
+	State           int    // Process State
+	Runtime         int    // Runtime Requirement
+	Memory          int    // Memory Requirement
+	priority        int    // Priority of the process
 	children        []int    // List of PID to child processes
 	parent          *Process // Parent process
 	ip              int      // Instruction pointer
@@ -74,6 +75,7 @@ func CreateProcess(name string, runtime int, mem int, ins code.Instructions, ins
 		State:           NEW,
 		Runtime:         runtime,
 		Memory:          mem,
+		priority:        1,
 		children:        []int{},
 		parent:          parent,
 		ip:              insPointer,
