@@ -104,7 +104,7 @@ Please remember that these requirements are minimal requirements for C/D grade. 
 - Sorting process table
 - Config for switching schedulers
     - `- sched="rr" || sched="fcfs"`
-- Kernel module
+- Kernel go module
     - Wrapper for:
         - Sched
         - Memory

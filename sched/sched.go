@@ -109,7 +109,12 @@ func (s *Scheduler) RunFirstComeFirstServe() {
 			// Execute process until it terminates
 			for {
 
-				curProc.Execute(s.CPU, s.Mem, s.InMsg, s.Mailboxes)
+				// Execute instruction
+				err := curProc.Execute(s.CPU, s.Mem, s.InMsg, s.Mailboxes)
+				if err != nil {
+					curProc.State = EXIT
+					break
+				}
 
 				// Is no more runtime, terminate process
 				if curProc.Runtime <= 0 {

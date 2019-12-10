@@ -43,7 +43,7 @@ var (
 
 // Process : Running set of code
 type Process struct {
-	// Some info should be in a process contol block
+	// Some info should be in a process control block
 	// And there will be a list of all process control blocks
 	PID             int      // Process ID
 	Name            string   // Process Name
@@ -89,11 +89,12 @@ func (p *Process) String() string {
 	return fmt.Sprintf("Name: %s, CPU: %d, Memory: %d", p.Name, p.Runtime, p.Memory)
 }
 
-// Execute : execute instruction in process
+// Execute : execute instruction in process, returns are for system calls (e.g. IO)
 func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, mail []chan byte) error {
 
 	if len(p.ins) <= p.ip {
-		return fmt.Errorf("End of instructions")
+		// No more instructions
+		return fmt.Errorf("End of isntructions")
 	}
 
 	// Current instruction to execute
@@ -109,16 +110,20 @@ func (p *Process) Execute(cpu *cpu.CPU, mem *memory.Memory, ch chan *Process, ma
 		// Subtract one from the runtime
 		p.ins[p.ip+1]--
 
-		time := code.ReadUint8(p.ins[p.ip+1:])
+		value := code.ReadUint8(p.ins[p.ip+1:])
 
 		// Check if instruction is finished
-		if time <= 0 {
+		if value <= 0 {
 			p.ip += 2
 		}
 
 		break
 	case code.IO:
 		p.ip += 2
+
+		// Ideally I would want to put the correct values in simulated registered
+		// That way I could just call a generic "system call" instruction that would
+		// Check the registers for the exact system call and parameters
 
 		break
 	case code.FORK:
