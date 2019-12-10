@@ -109,3 +109,11 @@ Please remember that these requirements are minimal requirements for C/D grade. 
         - Sched
         - Memory
         - CPU
+        
+### Known Bugs
+- Race condition between the scheduler and the tui
+    - TUI tries to display processes that have already have been deleted (Big bad)
+    - *FIX* Be a good person and add locks
+- Race condition between scheduling algorithm and recvProc worker
+    - Patched by going through the processes backwards but should be properly fixed
+    - *FIX* Add locks to the processes 
