@@ -102,6 +102,7 @@ func RenderTUI() {
 	ui.Render(grid)
 }
 
+// Launch : interprets commands entered into the text in the tui
 func Launch(args []string, ch chan *sched.Process) bool {
 
 	// Interpret commands
