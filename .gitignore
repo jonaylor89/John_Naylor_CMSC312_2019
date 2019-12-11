@@ -21,3 +21,6 @@ vendor/
 
 OS
 jose
+
+# MacOS
+.DS_Store

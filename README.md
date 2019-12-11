@@ -1,32 +1,51 @@
 # CMSC312
 
-The operating system simulation that is built in the class
-will live in the repository. 
+### Project Description
 
+In this project, each directory with go code contains a specific part or resource for the operating system simulator. `sched` holds the structures and instructions for the scheduler, `memory` contains code related to physical and virtual memory as well as the cache, etc. etc. `ProgramFiles` contains templates that are available for using while the OS is running. The simulator's front end is a terminal user interface that displays information about the processes running and the memory usage of the system. The user can load program file templates from the TUI which will send requests to the goroutine in charge of adding processes to the appropriate queue, which in turn allocates the appropriate memory as well. From there, the scheduler, running in a seperate goroutine, will pick up processes from those queues and execute them. Processes can run on the cpu, perform io functions, enter the critical section, and communicate with other processes. For interprocess communication, processes are assigned a mailbox at creation which they can store values in or receive from. Processes have pages made for them at their creation that are stored in virtual memory until they need to be accessed in which case they are moved to physical memory. There is a ARC Cache for pages to further speed up memory access.
 
-# Building 
+---------------------------------------
 
-without docker
+### Building and Running
+
+##### Requirements
+- Golang compiler
+- GNU make (optional)
+- Docker (optional)
+
+##### Building
+
+without docker or make
 ```sh
-~$ make
+go build -o jose .
 ```
 
-with docker
+with make
 ```
-~$ make docker-build
+make
 ```
 
-# Execution
+with docker and make
+```
+make docker-build
+```
+
+**[+] Go compiles to a single executable, no linking of libraries necessary**
+
+##### Execution
 
 without docker
 ```
-~$ ./jose
+./jose
 ```
 
 with docker
 ```
-~$ docker run -it jose:latest
+docker run -it jose:latest
 ```
+
+**[+] Because the frontend for this is a TUI, it helps to full screen the terminal you're running the simulator in**
+
 
 # Usage
 
